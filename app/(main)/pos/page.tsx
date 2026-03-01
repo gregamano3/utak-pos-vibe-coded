@@ -1,7 +1,9 @@
 import { prisma } from "@/app/lib/prisma"
 import { PosTerminal } from "./PosTerminal"
+import { requireRole } from "@/app/lib/auth"
 
 export default async function PosPage() {
+    await requireRole(["ADMIN", "MANAGER", "STAFF", "CASHIER"]);
     const categories = await prisma.category.findMany({
         include: { products: true },
         orderBy: { name: 'asc' }

@@ -6,15 +6,21 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "seed": "node scripts/ensure-seed.js && npx prisma db seed",
+    "seed:init": "node -e \"require('fs').copyFileSync('prisma/seed.example.ts','prisma/seed.ts');console.log('Copied seed.example.ts to seed.ts')\""
   },
   "dependencies": {
     "@prisma/client": "^6.19.2",
     "bcryptjs": "^3.0.3",
+    "jspdf": "^4.2.0",
+    "jspdf-autotable": "^5.0.7",
     "lucide-react": "^0.575.0",
     "next": "16.1.6",
+    "next-themes": "^0.4.6",
     "react": "19.2.3",
-    "react-dom": "19.2.3"
+    "react-dom": "19.2.3",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

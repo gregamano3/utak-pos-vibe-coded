@@ -1,5 +1,8 @@
 import { prisma } from "@/app/lib/prisma"
+import { formatCurrency } from "@/app/lib/currency"
+import { requireRole } from "@/app/lib/auth"
 import { Calendar as CalendarIcon, Filter } from "lucide-react"
+import { ReportExportButtons } from "./ReportExportButtons"
 
 export default async function ReportsPage(props: {
     searchParams?: Promise<{
@@ -7,6 +10,7 @@ export default async function ReportsPage(props: {
         to?: string;
     }>;
 }) {
+    await requireRole(["ADMIN", "MANAGER", "CASHIER"]);
     const searchParams = await props.searchParams;
 
     const from = searchParams?.from ? new Date(searchParams.from) : new Date(new Date().setHours(0, 0, 0, 0) - (7 * 24 * 60 * 60 * 1000))
@@ -59,8 +63,13 @@ export default async function ReportsPage(props: {
                     <p className="text-zinc-500 dark:text-zinc-400 mt-1">View revenue, popular items, and order history.</p>
                 </div>
 
-                {/* Simple Date Filter Form */}
-                <form className="bg-white dark:bg-zinc-950 p-2 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-800 flex items-center gap-2">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                    <ReportExportButtons
+                        from={from.toISOString().split("T")[0]}
+                        to={to.toISOString().split("T")[0]}
+                    />
+                    {/* Simple Date Filter Form */}
+                    <form className="bg-white dark:bg-zinc-950 p-2 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-800 flex items-center gap-2">
                     <CalendarIcon size={18} className="text-zinc-400 ml-2" />
                     <input
                         type="date"
@@ -79,13 +88,14 @@ export default async function ReportsPage(props: {
                         <Filter size={14} /> Filter
                     </button>
                 </form>
+                </div>
             </header>
 
             {/* Summary Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="bg-white dark:bg-zinc-950 p-6 rounded-2xl shadow-sm border border-zinc-200 dark:border-zinc-800">
                     <h3 className="text-sm font-medium text-zinc-500 dark:text-zinc-400">Total Sales</h3>
-                    <p className="text-3xl font-bold mt-2 text-zinc-900 dark:text-white">?{totalSales.toFixed(2)}</p>
+                    <p className="text-3xl font-bold mt-2 text-zinc-900 dark:text-white">{formatCurrency(totalSales)}</p>
                 </div>
                 <div className="bg-white dark:bg-zinc-950 p-6 rounded-2xl shadow-sm border border-zinc-200 dark:border-zinc-800">
                     <h3 className="text-sm font-medium text-zinc-500 dark:text-zinc-400">Total Orders</h3>
@@ -129,7 +139,7 @@ export default async function ReportsPage(props: {
                                         <span className="text-zinc-500 text-xs">{order.createdAt.toLocaleTimeString()}</span>
                                     </td>
                                     <td className="px-6 py-4 text-zinc-600 dark:text-zinc-400 font-medium">{order.items.reduce((acc, i) => acc + i.quantity, 0)} items</td>
-                                    <td className="px-6 py-4 font-bold text-zinc-900 dark:text-white">?{order.totalAmount.toFixed(2)}</td>
+                                    <td className="px-6 py-4 font-bold text-zinc-900 dark:text-white">{formatCurrency(order.totalAmount)}</td>
                                     <td className="px-6 py-4">
                                         <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400">
                                             CASH

@@ -1,3 +1,12 @@
+/**
+ * PLACEHOLDER / DEMO DATA - For development only.
+ * Copy this file to prisma/seed.ts to customize locally.
+ * seed.ts is gitignored so your data stays private.
+ *
+ * Quick login: admin, manager, cashier, kitchen, staff
+ * Password for all: password123
+ */
+
 import { PrismaClient } from '@prisma/client'
 import bcrypt from 'bcryptjs'
 
@@ -17,43 +26,38 @@ async function main() {
     await prisma.ingredient.deleteMany()
     await prisma.user.deleteMany()
 
-    // 2. Create Demo Users
+    // 2. Create Demo Users (placeholder credentials)
     const hashedPassword = await bcrypt.hash('password123', 10)
 
-    // Admin
     const admin = await prisma.user.create({
         data: { username: 'admin', password: hashedPassword, role: 'ADMIN', pin: '1111' }
     })
 
-    // Manager
     const manager = await prisma.user.create({
         data: { username: 'manager', password: hashedPassword, role: 'MANAGER', pin: '2222' }
     })
 
-    // Cashier
     const cashier = await prisma.user.create({
         data: { username: 'cashier', password: hashedPassword, role: 'CASHIER', pin: '3333' }
     })
 
-    // Kitchen
     const kitchen = await prisma.user.create({
         data: { username: 'kitchen', password: hashedPassword, role: 'KITCHEN', pin: '4444' }
     })
 
-    // Staff
     await prisma.user.create({
         data: { username: 'staff', password: hashedPassword, role: 'STAFF', pin: '5555' }
     })
 
     console.log('Created Demo Users: admin, manager, cashier, kitchen, staff (password123 for all)')
 
-    // 3. Create Categories
+    // 3. Create Categories (placeholder)
     const catCoffee = await prisma.category.create({ data: { name: 'Coffee' } })
     const catPastries = await prisma.category.create({ data: { name: 'Pastries' } })
     const catDrinks = await prisma.category.create({ data: { name: 'Cold Drinks' } })
     console.log('Created Categories')
 
-    // 4. Create Ingredients & Inventory
+    // 4. Create Ingredients & Inventory (placeholder)
     const coffeeBeans = await prisma.ingredient.create({ data: { name: 'Coffee Beans', unit: 'g' } })
     const milk = await prisma.ingredient.create({ data: { name: 'Whole Milk', unit: 'ml' } })
     const syrup = await prisma.ingredient.create({ data: { name: 'Vanilla Syrup', unit: 'ml' } })
@@ -62,31 +66,27 @@ async function main() {
 
     await prisma.inventory.createMany({
         data: [
-            { ingredientId: coffeeBeans.id, quantity: 5000 },  // 5kg
-            { ingredientId: milk.id, quantity: 10000 },        // 10L
-            { ingredientId: syrup.id, quantity: 1000 },        // 1L
-            { ingredientId: flour.id, quantity: 20000 },       // 20kg
-            { ingredientId: sugar.id, quantity: 15000 },       // 15kg
+            { ingredientId: coffeeBeans.id, quantity: 5000 },
+            { ingredientId: milk.id, quantity: 10000 },
+            { ingredientId: syrup.id, quantity: 1000 },
+            { ingredientId: flour.id, quantity: 20000 },
+            { ingredientId: sugar.id, quantity: 15000 },
         ]
     })
     console.log('Created Ingredients & Inventory Stock')
 
-    // 5. Create Products & Recipes
-    // Espresso
+    // 5. Create Products & Recipes (placeholder)
     const espresso = await prisma.product.create({
         data: {
             name: 'Espresso',
             price: 3.50,
             categoryId: catCoffee.id,
             ingredients: {
-                create: [
-                    { ingredientId: coffeeBeans.id, quantity: 18 } // 18g beans
-                ]
+                create: [{ ingredientId: coffeeBeans.id, quantity: 18 }]
             }
         }
     })
 
-    // Latte
     const latte = await prisma.product.create({
         data: {
             name: 'Vanilla Latte',
@@ -94,15 +94,14 @@ async function main() {
             categoryId: catCoffee.id,
             ingredients: {
                 create: [
-                    { ingredientId: coffeeBeans.id, quantity: 18 },  // 18g beans
-                    { ingredientId: milk.id, quantity: 200 },       // 200ml milk
-                    { ingredientId: syrup.id, quantity: 15 }        // 15ml syrup
+                    { ingredientId: coffeeBeans.id, quantity: 18 },
+                    { ingredientId: milk.id, quantity: 200 },
+                    { ingredientId: syrup.id, quantity: 15 }
                 ]
             }
         }
     })
 
-    // Croissant (No recipe mapping for simplicity, just a product)
     const croissant = await prisma.product.create({
         data: {
             name: 'Butter Croissant',
@@ -111,23 +110,20 @@ async function main() {
         }
     })
 
-    // Iced Tea
     const icedTea = await prisma.product.create({
         data: {
             name: 'Iced Lemon Tea',
             price: 3.00,
             categoryId: catDrinks.id,
             ingredients: {
-                create: [
-                    { ingredientId: sugar.id, quantity: 30 } // 30g sugar
-                ]
+                create: [{ ingredientId: sugar.id, quantity: 30 }]
             }
         }
     })
 
     console.log('Created Products & Recipes')
 
-    // 6. Create some dummy orders for today
+    // 6. Sample orders (placeholder)
     console.log('Creating sample orders...')
 
     await prisma.order.create({
@@ -136,9 +132,7 @@ async function main() {
             paymentMethod: 'CASH',
             userId: cashier.id,
             items: {
-                create: [
-                    { productId: latte.id, quantity: 2, price: 5.50 }
-                ]
+                create: [{ productId: latte.id, quantity: 2, price: 5.50 }]
             }
         }
     })

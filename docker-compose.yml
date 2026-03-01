@@ -9,6 +9,8 @@ services:
       - "3000:3000"
     environment:
       - DATABASE_URL=postgresql://root:secret@db:5432/utak_pos?schema=public
+    volumes:
+      - uploads_data:/app/public/uploads
     depends_on:
       db:
         condition: service_healthy
@@ -32,3 +34,4 @@ services:
 
 volumes:
   db_data:
+  uploads_data:

@@ -17,7 +17,7 @@ export async function login(formData: FormData) {
     if (userCount === 0) {
         const hashedPassword = await bcrypt.hash(password, 10)
         const newUser = await prisma.user.create({
-            data: { username, password: hashedPassword }
+            data: { username, password: hashedPassword, role: "ADMIN" }
         })
         const cookieStore = await cookies()
         cookieStore.set("auth_token", newUser.id)

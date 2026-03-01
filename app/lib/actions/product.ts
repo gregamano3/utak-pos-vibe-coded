@@ -18,6 +18,7 @@ export async function createProduct(formData: FormData) {
     const name = formData.get("name") as string
     const priceStr = formData.get("price") as string
     const categoryId = formData.get("categoryId") as string
+    const imageUrl = (formData.get("imageUrl") as string) || null
 
     if (!name || !priceStr || !categoryId) return
 
@@ -25,7 +26,8 @@ export async function createProduct(formData: FormData) {
         data: {
             name,
             price: parseFloat(priceStr),
-            categoryId
+            categoryId,
+            imageUrl: imageUrl || undefined,
         }
     })
 
@@ -34,6 +36,27 @@ export async function createProduct(formData: FormData) {
 
 export async function deleteCategory(id: string) {
     await prisma.category.delete({ where: { id } })
+    revalidatePath("/products")
+}
+
+export async function updateProduct(id: string, formData: FormData) {
+    const name = formData.get("name") as string
+    const priceStr = formData.get("price") as string
+    const categoryId = formData.get("categoryId") as string
+    const imageUrl = (formData.get("imageUrl") as string) || null
+
+    if (!name || !priceStr || !categoryId) return
+
+    await prisma.product.update({
+        where: { id },
+        data: {
+            name,
+            price: parseFloat(priceStr),
+            categoryId,
+            imageUrl: imageUrl || undefined,
+        },
+    })
+
     revalidatePath("/products")
 }
 

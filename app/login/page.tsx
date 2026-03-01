@@ -2,14 +2,23 @@
 
 import { login } from "@/app/lib/actions/auth"
 import { useState } from "react"
-import { Store } from "lucide-react"
+import { Store, Shield, UserCog, CreditCard, ChefHat, User } from "lucide-react"
+import { ThemeSwitcher } from "@/app/components/ThemeSwitcher"
+
+const DEMO_ACCOUNTS = [
+    { username: "admin", password: "password123", role: "Admin", icon: Shield, color: "bg-violet-500 hover:bg-violet-600 border-violet-200 dark:border-violet-800" },
+    { username: "manager", password: "password123", role: "Manager", icon: UserCog, color: "bg-blue-500 hover:bg-blue-600 border-blue-200 dark:border-blue-800" },
+    { username: "cashier", password: "password123", role: "Cashier", icon: CreditCard, color: "bg-emerald-500 hover:bg-emerald-600 border-emerald-200 dark:border-emerald-800" },
+    { username: "kitchen", password: "password123", role: "Kitchen", icon: ChefHat, color: "bg-amber-500 hover:bg-amber-600 border-amber-200 dark:border-amber-800" },
+    { username: "staff", password: "password123", role: "Staff", icon: User, color: "bg-slate-500 hover:bg-slate-600 border-slate-200 dark:border-slate-700" },
+] as const
 
 export default function LoginPage() {
     const [error, setError] = useState("")
-    const [loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState<string | null>(null)
 
-    async function handleSubmit(formData: FormData) {
-        setLoading(true)
+    async function handleSubmit(formData: FormData, account?: string) {
+        setLoading(account ?? "form")
         setError("")
         try {
             const res = await login(formData)
@@ -19,53 +28,89 @@ export default function LoginPage() {
                 setError("An error occurred during login")
             }
         } finally {
-            setLoading(false)
+            setLoading(null)
         }
     }
 
     return (
-        <div className="min-h-screen flex flex-col items-center justify-center bg-zinc-50 dark:bg-black font-sans px-4">
-            <div className="w-full max-w-sm p-8 bg-white dark:bg-zinc-950 rounded-3xl shadow-xl border border-zinc-200 dark:border-zinc-800">
-                <div className="flex flex-col items-center text-center mb-8">
-                    <div className="w-12 h-12 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-lg shadow-indigo-500/30 mb-4">
-                        <Store size={24} />
+        <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50 dark:bg-zinc-950 font-sans px-4 py-8">
+            <div className="absolute top-4 right-4">
+                <ThemeSwitcher />
+            </div>
+            <div className="w-full max-w-md space-y-6">
+                <div className="p-8 bg-white dark:bg-zinc-900 rounded-2xl shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-200 dark:border-zinc-800">
+                    <div className="flex flex-col items-center text-center mb-6">
+                        <div className="w-12 h-12 rounded-xl bg-emerald-500 flex items-center justify-center text-white shadow-lg shadow-emerald-500/30 mb-4">
+                            <Store size={24} />
+                        </div>
+                        <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Utak POS</h1>
+                        <p className="text-sm text-slate-500 dark:text-zinc-400 mt-2">Sign in to continue</p>
                     </div>
-                    <h1 className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-white">Sign In</h1>
-                    <p className="text-sm text-zinc-500 mt-2">Enter any username/password to initialize if this is your first run.</p>
-                </div>
 
-                <form action={handleSubmit} className="space-y-4">
+                    <form action={(fd) => handleSubmit(fd, "form")} className="space-y-4">
                     {error && (
-                        <div className="p-3 text-sm text-rose-500 bg-rose-50 dark:bg-rose-900/10 border border-rose-100 dark:border-rose-900/30 rounded-lg">
+                        <div className="p-3 text-sm text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-900/20 border border-rose-100 dark:border-rose-900/30 rounded-lg">
                             {error}
                         </div>
                     )}
                     <div>
-                        <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">Username</label>
+                        <label className="block text-sm font-medium text-slate-700 dark:text-zinc-300 mb-1">Username</label>
                         <input
                             name="username"
                             required
-                            className="w-full bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 text-zinc-900 dark:text-white"
+                            className="w-full bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-zinc-500"
                         />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">Password</label>
+                        <label className="block text-sm font-medium text-slate-700 dark:text-zinc-300 mb-1">Password</label>
                         <input
                             name="password"
                             type="password"
                             required
-                            className="w-full bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 text-zinc-900 dark:text-white"
+                            className="w-full bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-zinc-500"
                         />
                     </div>
                     <button
                         type="submit"
-                        disabled={loading}
-                        className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 rounded-xl transition-colors shadow-sm disabled:opacity-50"
+                        disabled={!!loading}
+                        className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-3 rounded-xl transition-colors shadow-md disabled:opacity-50"
                     >
-                        {loading ? "Signing in..." : "Sign In"}
+                        {loading === "form" ? "Signing in..." : "Sign In"}
                     </button>
                 </form>
+                </div>
+
+                <div className="p-4 bg-white dark:bg-zinc-900 rounded-2xl border border-slate-200 dark:border-zinc-800">
+                    <p className="text-xs font-semibold text-slate-500 dark:text-zinc-400 uppercase tracking-wider mb-3 text-center">Quick login (demo)</p>
+                    <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
+                        {DEMO_ACCOUNTS.map((acc) => {
+                            const Icon = acc.icon
+                            const isLoading = loading === acc.username
+                            return (
+                                <form key={acc.username} action={(fd) => handleSubmit(fd, acc.username)}>
+                                    <input type="hidden" name="username" value={acc.username} />
+                                    <input type="hidden" name="password" value={acc.password} />
+                                    <button
+                                        type="submit"
+                                        disabled={!!loading}
+                                        className={`w-full flex flex-col items-center gap-1.5 p-3 rounded-xl border transition-all ${acc.color} text-white disabled:opacity-50`}
+                                        title={`Login as ${acc.role}`}
+                                    >
+                                        <Icon size={20} />
+                                        <span className="text-xs font-medium capitalize">{acc.role}</span>
+                                        {isLoading && <span className="text-[10px] animate-pulse">...</span>}
+                                    </button>
+                                </form>
+                            )
+                        })}
+                    </div>
+                    <p className="text-[10px] text-slate-400 dark:text-zinc-500 text-center mt-2">All use password: password123</p>
+                </div>
             </div>
+            <footer className="absolute bottom-4 flex items-center gap-2 text-slate-500 dark:text-zinc-400 text-sm">
+                <span>Theme</span>
+                <ThemeSwitcher />
+            </footer>
         </div>
     )
 }

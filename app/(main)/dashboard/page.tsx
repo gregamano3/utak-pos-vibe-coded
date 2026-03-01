@@ -1,7 +1,21 @@
 import { prisma } from "@/app/lib/prisma"
+import { formatCurrency } from "@/app/lib/currency"
+import { requireRole } from "@/app/lib/auth"
 import Link from "next/link"
+import {
+    Bell,
+    CreditCard,
+    Wallet,
+    Receipt,
+    ShoppingCart,
+    TrendingUp,
+    MoreHorizontal,
+    CheckCircle,
+    AlertTriangle,
+} from "lucide-react"
 
 export default async function DashboardPage() {
+    const user = await requireRole(["ADMIN", "MANAGER", "STAFF", "CASHIER"]);
     const today = new Date()
     today.setHours(0, 0, 0, 0)
 
@@ -46,6 +60,7 @@ export default async function DashboardPage() {
         const prod = products.find(p => p.id === t.productId)
         return {
             name: prod?.name || "Unknown",
+            imageUrl: prod?.imageUrl ?? null,
             category: prod?.category.name || "N/A",
             price: prod?.price || 0,
             quantity: t._sum.quantity || 0,
@@ -53,42 +68,45 @@ export default async function DashboardPage() {
         }
     })
 
-    const getProductImage = (productName: string) => {
-        const p = productName.toLowerCase()
-        if (p.includes("latte") || p.includes("coffee") || p.includes("cappuccino")) return "https://images.unsplash.com/photo-1541167760496-1628856ab772?q=80&w=400&auto=format&fit=crop"
-        if (p.includes("espresso")) return "https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04?q=80&w=400&auto=format&fit=crop"
-        if (p.includes("tea")) return "https://images.unsplash.com/photo-1499638673689-79a0b5115d87?q=80&w=400&auto=format&fit=crop"
-        if (p.includes("burger")) return "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=400&auto=format&fit=crop"
-        if (p.includes("fries")) return "https://images.unsplash.com/photo-1576107232684-1279f390859f?q=80&w=400&auto=format&fit=crop"
-        if (p.includes("salad")) return "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=400&auto=format&fit=crop"
-        if (p.includes("cake")) return "https://images.unsplash.com/photo-1578985545062-69928b1ea383?q=80&w=400&auto=format&fit=crop"
-        if (p.includes("ice cream") || p.includes("scoop")) return "https://images.unsplash.com/photo-1563805042-7684c8a9e9ce?q=80&w=400&auto=format&fit=crop"
-        if (p.includes("wing") || p.includes("chicken")) return "https://images.unsplash.com/photo-1524114664604-cd8133cd6771?q=80&w=400&auto=format&fit=crop"
+    const getProductImage = (p: { imageUrl?: string | null; name: string }) => {
+        if (p.imageUrl) return p.imageUrl
+        const n = p.name.toLowerCase()
+        if (n.includes("latte") || n.includes("coffee") || n.includes("cappuccino")) return "https://images.unsplash.com/photo-1541167760496-1628856ab772?q=80&w=400&auto=format&fit=crop"
+        if (n.includes("espresso")) return "https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04?q=80&w=400&auto=format&fit=crop"
+        if (n.includes("tea")) return "https://images.unsplash.com/photo-1499638673689-79a0b5115d87?q=80&w=400&auto=format&fit=crop"
+        if (n.includes("burger")) return "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=400&auto=format&fit=crop"
+        if (n.includes("fries")) return "https://images.unsplash.com/photo-1576107232684-1279f390859f?q=80&w=400&auto=format&fit=crop"
+        if (n.includes("salad")) return "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=400&auto=format&fit=crop"
+        if (n.includes("cake")) return "https://images.unsplash.com/photo-1578985545062-69928b1ea383?q=80&w=400&auto=format&fit=crop"
+        if (n.includes("ice cream") || n.includes("scoop")) return "https://images.unsplash.com/photo-1563805042-7684c8a9e9ce?q=80&w=400&auto=format&fit=crop"
+        if (n.includes("wing") || n.includes("chicken")) return "https://images.unsplash.com/photo-1524114664604-cd8133cd6771?q=80&w=400&auto=format&fit=crop"
         return "https://images.unsplash.com/photo-1546069901-ba6dfaec34a7?q=80&w=400&auto=format&fit=crop"
     }
 
     return (
-        <div className="flex-1 flex flex-col h-screen overflow-y-auto relative bg-[#f8fafc] text-[#1e293b] font-sans selection:bg-[#10b981]/20 selection:text-[#059669]">
+        <div className="flex-1 flex flex-col h-screen overflow-y-auto relative bg-slate-50 dark:bg-zinc-900 text-slate-800 dark:text-zinc-100 font-sans selection:bg-emerald-500/20 selection:text-emerald-600 dark:selection:text-emerald-400">
 
             {/* Header */}
-            <header className="flex items-center justify-between px-8 py-6 sticky top-0 bg-[#f8fafc]/80 backdrop-blur-md z-10 border-b border-[#f1f5f9]">
+            <header className="flex items-center justify-between px-8 py-6 sticky top-0 bg-slate-50/80 dark:bg-zinc-900/80 backdrop-blur-md z-10 border-b border-slate-200 dark:border-zinc-800">
                 <div>
-                    <h1 className="text-2xl font-bold tracking-tight text-[#1e293b]">Dashboard Overview</h1>
-                    <p className="text-[#64748b] text-sm mt-1 font-medium">Welcome back, Admin</p>
+                    <h1 className="text-2xl font-bold tracking-tight text-slate-800 dark:text-white">Dashboard Overview</h1>
+                    <p className="text-slate-500 dark:text-zinc-400 text-sm mt-1 font-medium">Welcome back, {user.username}</p>
                 </div>
                 <div className="flex items-center gap-4">
-                    <button className="flex items-center justify-center h-10 w-10 rounded-full bg-white text-[#64748b] hover:text-[#10b981] hover:bg-slate-50 border border-[#e2e8f0] shadow-sm transition-all relative">
-                        <span className="material-symbols-outlined text-[20px]">notifications</span>
+                    <button className="flex items-center justify-center h-10 w-10 rounded-full bg-white dark:bg-zinc-800 text-slate-500 dark:text-zinc-400 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-slate-50 dark:hover:bg-zinc-700 border border-slate-200 dark:border-zinc-700 shadow-sm transition-all relative">
+                        <Bell size={20} />
                         {lowStockItems.length > 0 && (
-                            <span className="absolute top-2.5 right-2.5 h-2 w-2 bg-red-500 rounded-full border border-white"></span>
+                            <span className="absolute top-2 right-2 h-2 w-2 bg-red-500 rounded-full border-2 border-white dark:border-zinc-900" />
                         )}
                     </button>
-                    <div className="flex items-center gap-3 pl-4 border-l border-[#e2e8f0]">
+                    <div className="flex items-center gap-3 pl-4 border-l border-slate-200 dark:border-zinc-700">
                         <div className="text-right hidden sm:block">
-                            <p className="text-sm font-semibold text-[#1e293b]">Admin User</p>
-                            <p className="text-xs text-[#64748b] font-medium">Store Manager</p>
+                            <p className="text-sm font-semibold text-slate-800 dark:text-white">{user.username}</p>
+                            <p className="text-xs text-slate-500 dark:text-zinc-400 font-medium capitalize">{user.role.toLowerCase()}</p>
                         </div>
-                        <div className="h-10 w-10 rounded-full bg-slate-100 overflow-hidden bg-cover bg-center border border-[#e2e8f0] shadow-sm" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=100&auto=format&fit=facearea&facepad=2')" }}></div>
+                        <div className="h-10 w-10 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center border border-emerald-200 dark:border-emerald-800 shadow-sm text-emerald-600 dark:text-emerald-400 font-bold text-sm">
+                            {user.username[0]?.toUpperCase()}
+                        </div>
                     </div>
                 </div>
             </header>
@@ -97,76 +115,76 @@ export default async function DashboardPage() {
 
                 {/* Metric Cards Row */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-[0_4px_20px_-2px_rgba(0,0,0,0.03)] flex flex-col justify-between h-36 group hover:-translate-y-1 transition-all duration-300">
+                    <div className="bg-white dark:bg-zinc-950 p-6 rounded-2xl border border-slate-100 dark:border-zinc-800 shadow-[0_4px_20px_-2px_rgba(0,0,0,0.03)] dark:shadow-none flex flex-col justify-between h-36 group hover:-translate-y-1 transition-all duration-300">
                         <div className="flex justify-between items-start">
                             <div className="flex flex-col">
-                                <span className="text-[#64748b] text-xs font-semibold uppercase tracking-wider mb-2">Today's Sales</span>
-                                <span className="text-3xl font-bold text-[#1e293b] tracking-tight">?{todaySales.toFixed(2)}</span>
+                                <span className="text-slate-500 dark:text-zinc-400 text-xs font-semibold uppercase tracking-wider mb-2">Today&apos;s Sales</span>
+                                <span className="text-3xl font-bold text-slate-800 dark:text-white tracking-tight">{formatCurrency(todaySales)}</span>
                             </div>
-                            <div className="p-2.5 bg-emerald-50 rounded-xl text-[#10b981]">
-                                <span className="material-symbols-outlined text-[24px]">payments</span>
+                            <div className="p-2.5 bg-emerald-50 dark:bg-emerald-900/20 rounded-xl text-emerald-600 dark:text-emerald-400">
+                                <CreditCard size={24} />
                             </div>
                         </div>
                         <div className="flex items-center gap-2 text-sm mt-2">
-                            <span className="bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-md text-xs font-semibold flex items-center gap-1 border border-emerald-100">
-                                <span className="material-symbols-outlined text-[14px]">trending_up</span>
+                            <span className="bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 px-2 py-0.5 rounded-md text-xs font-semibold flex items-center gap-1 border border-emerald-100 dark:border-emerald-800">
+                                <TrendingUp size={14} />
                                 12%
                             </span>
                             <span className="text-[#64748b] text-xs">vs yesterday</span>
                         </div>
                     </div>
 
-                    <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-[0_4px_20px_-2px_rgba(0,0,0,0.03)] flex flex-col justify-between h-36 group hover:-translate-y-1 transition-all duration-300">
+                    <div className="bg-white dark:bg-zinc-950 p-6 rounded-2xl border border-slate-100 dark:border-zinc-800 shadow-[0_4px_20px_-2px_rgba(0,0,0,0.03)] dark:shadow-none flex flex-col justify-between h-36 group hover:-translate-y-1 transition-all duration-300">
                         <div className="flex justify-between items-start">
                             <div className="flex flex-col">
-                                <span className="text-[#64748b] text-xs font-semibold uppercase tracking-wider mb-2">Net Profit</span>
-                                <span className="text-3xl font-bold text-[#1e293b] tracking-tight">?{netProfit.toFixed(2)}</span>
+                                <span className="text-slate-500 dark:text-zinc-400 text-xs font-semibold uppercase tracking-wider mb-2">Net Profit</span>
+                                <span className="text-3xl font-bold text-slate-800 dark:text-white tracking-tight">{formatCurrency(netProfit)}</span>
                             </div>
-                            <div className="p-2.5 bg-blue-50 rounded-xl text-blue-600">
-                                <span className="material-symbols-outlined text-[24px]">account_balance_wallet</span>
+                            <div className="p-2.5 bg-blue-50 dark:bg-blue-900/20 rounded-xl text-blue-600 dark:text-blue-400">
+                                <Wallet size={24} />
                             </div>
                         </div>
                         <div className="flex items-center gap-2 text-sm mt-2">
-                            <span className="bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-md text-xs font-semibold flex items-center gap-1 border border-emerald-100">
-                                <span className="material-symbols-outlined text-[14px]">trending_up</span>
+                            <span className="bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 px-2 py-0.5 rounded-md text-xs font-semibold flex items-center gap-1 border border-emerald-100 dark:border-emerald-800">
+                                <TrendingUp size={14} />
                                 5%
                             </span>
                             <span className="text-[#64748b] text-xs">vs yesterday</span>
                         </div>
                     </div>
 
-                    <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-[0_4px_20px_-2px_rgba(0,0,0,0.03)] flex flex-col justify-between h-36 group hover:-translate-y-1 transition-all duration-300">
+                    <div className="bg-white dark:bg-zinc-950 p-6 rounded-2xl border border-slate-100 dark:border-zinc-800 shadow-[0_4px_20px_-2px_rgba(0,0,0,0.03)] dark:shadow-none flex flex-col justify-between h-36 group hover:-translate-y-1 transition-all duration-300">
                         <div className="flex justify-between items-start">
                             <div className="flex flex-col">
-                                <span className="text-[#64748b] text-xs font-semibold uppercase tracking-wider mb-2">Order Count</span>
-                                <span className="text-3xl font-bold text-[#1e293b] tracking-tight">{todayCount}</span>
+                                <span className="text-slate-500 dark:text-zinc-400 text-xs font-semibold uppercase tracking-wider mb-2">Order Count</span>
+                                <span className="text-3xl font-bold text-slate-800 dark:text-white tracking-tight">{todayCount}</span>
                             </div>
-                            <div className="p-2.5 bg-orange-50 rounded-xl text-orange-600">
-                                <span className="material-symbols-outlined text-[24px]">receipt_long</span>
+                            <div className="p-2.5 bg-orange-50 dark:bg-orange-900/20 rounded-xl text-orange-600 dark:text-orange-400">
+                                <Receipt size={24} />
                             </div>
                         </div>
                         <div className="flex items-center gap-2 text-sm mt-2">
-                            <span className="bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-md text-xs font-semibold flex items-center gap-1 border border-emerald-100">
-                                <span className="material-symbols-outlined text-[14px]">trending_up</span>
+                            <span className="bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 px-2 py-0.5 rounded-md text-xs font-semibold flex items-center gap-1 border border-emerald-100 dark:border-emerald-800">
+                                <TrendingUp size={14} />
                                 {todayCount > 0 ? "8%" : "0%"}
                             </span>
                             <span className="text-[#64748b] text-xs">vs yesterday</span>
                         </div>
                     </div>
 
-                    <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-[0_4px_20px_-2px_rgba(0,0,0,0.03)] flex flex-col justify-between h-36 group hover:-translate-y-1 transition-all duration-300">
+                    <div className="bg-white dark:bg-zinc-950 p-6 rounded-2xl border border-slate-100 dark:border-zinc-800 shadow-[0_4px_20px_-2px_rgba(0,0,0,0.03)] dark:shadow-none flex flex-col justify-between h-36 group hover:-translate-y-1 transition-all duration-300">
                         <div className="flex justify-between items-start">
                             <div className="flex flex-col">
-                                <span className="text-[#64748b] text-xs font-semibold uppercase tracking-wider mb-2">Avg Order Value</span>
-                                <span className="text-3xl font-bold text-[#1e293b] tracking-tight">?{avgOrder.toFixed(2)}</span>
+                                <span className="text-slate-500 dark:text-zinc-400 text-xs font-semibold uppercase tracking-wider mb-2">Avg Order Value</span>
+                                <span className="text-3xl font-bold text-slate-800 dark:text-white tracking-tight">{formatCurrency(avgOrder)}</span>
                             </div>
-                            <div className="p-2.5 bg-purple-50 rounded-xl text-purple-600">
-                                <span className="material-symbols-outlined text-[24px]">shopping_basket</span>
+                            <div className="p-2.5 bg-purple-50 dark:bg-purple-900/20 rounded-xl text-purple-600 dark:text-purple-400">
+                                <ShoppingCart size={24} />
                             </div>
                         </div>
                         <div className="flex items-center gap-2 text-sm mt-2">
-                            <span className="bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-md text-xs font-semibold flex items-center gap-1 border border-emerald-100">
-                                <span className="material-symbols-outlined text-[14px]">trending_up</span>
+                            <span className="bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 px-2 py-0.5 rounded-md text-xs font-semibold flex items-center gap-1 border border-emerald-100 dark:border-emerald-800">
+                                <TrendingUp size={14} />
                                 8%
                             </span>
                             <span className="text-[#64748b] text-xs">vs yesterday</span>
@@ -181,11 +199,11 @@ export default async function DashboardPage() {
                     <div className="lg:col-span-2 flex flex-col gap-6">
 
                         {/* Peak Hours Heatmap (Visual only placeholder as requested in design) */}
-                        <div className="bg-white p-8 rounded-2xl border border-slate-100 shadow-[0_4px_20px_-2px_rgba(0,0,0,0.03)]">
+                        <div className="bg-white dark:bg-zinc-950 p-8 rounded-2xl border border-slate-100 dark:border-zinc-800 shadow-[0_4px_20px_-2px_rgba(0,0,0,0.03)] dark:shadow-none">
                             <div className="flex justify-between items-start mb-8">
                                 <div>
-                                    <h3 className="text-lg font-bold text-[#1e293b]">Peak Hours Activity</h3>
-                                    <p className="text-[#64748b] text-sm mt-1">Store traffic heatmap based on transaction volume</p>
+                                    <h3 className="text-lg font-bold text-slate-800 dark:text-white">Peak Hours Activity</h3>
+                                    <p className="text-slate-500 dark:text-zinc-400 text-sm mt-1">Store traffic heatmap based on transaction volume</p>
                                 </div>
                                 <div className="flex items-center gap-1 bg-slate-50 border border-slate-200 rounded-lg p-1 text-xs font-medium">
                                     <button className="px-4 py-1.5 bg-white shadow-sm border border-slate-200 rounded-md text-[#1e293b] font-semibold transition-all">Today</button>
@@ -242,9 +260,9 @@ export default async function DashboardPage() {
                         </div>
 
                         {/* Top Selling Items Table */}
-                        <div className="bg-white p-8 rounded-2xl border border-slate-100 shadow-[0_4px_20px_-2px_rgba(0,0,0,0.03)] flex-1">
+                        <div className="bg-white dark:bg-zinc-950 p-8 rounded-2xl border border-slate-100 dark:border-zinc-800 shadow-[0_4px_20px_-2px_rgba(0,0,0,0.03)] dark:shadow-none flex-1">
                             <div className="flex justify-between items-center mb-6">
-                                <h3 className="text-lg font-bold text-[#1e293b]">Top Selling Items</h3>
+                                <h3 className="text-lg font-bold text-slate-800 dark:text-white">Top Selling Items</h3>
                                 <Link href="/reports" className="text-sm font-semibold text-[#10b981] hover:text-[#059669]">View Reports</Link>
                             </div>
                             <div className="overflow-x-auto">
@@ -261,12 +279,12 @@ export default async function DashboardPage() {
                                         {topProductsWithNames.map((p, idx) => (
                                             <tr key={idx} className="group hover:bg-slate-50 transition-colors border-b border-[#f1f5f9]/50 last:border-0">
                                                 <td className="py-4 px-3 pl-0 flex items-center gap-4">
-                                                    <div className="h-10 w-10 rounded-lg bg-slate-200 bg-cover bg-center shadow-sm" style={{ backgroundImage: `url('?{getProductImage(p.name)}')` }}></div>
-                                                    <span className="font-semibold text-[#1e293b]">{p.name}</span>
+                                                    <div className="h-10 w-10 rounded-lg bg-slate-200 dark:bg-zinc-700 bg-cover bg-center shadow-sm" style={{ backgroundImage: `url('${getProductImage(p)}')` }} />
+                                                    <span className="font-semibold text-slate-800 dark:text-white">{p.name}</span>
                                                 </td>
-                                                <td className="py-4 px-3 text-[#64748b] font-medium">{p.category}</td>
-                                                <td className="py-4 px-3 text-right text-[#1e293b] font-semibold">{p.quantity}</td>
-                                                <td className="py-4 px-3 text-right text-[#1e293b] font-bold">?{p.revenue.toFixed(2)}</td>
+                                                <td className="py-4 px-3 text-slate-500 dark:text-zinc-400 font-medium">{p.category}</td>
+                                                <td className="py-4 px-3 text-right text-slate-800 dark:text-white font-semibold">{p.quantity}</td>
+                                                <td className="py-4 px-3 text-right text-slate-800 dark:text-white font-bold">{formatCurrency(p.revenue)}</td>
                                             </tr>
                                         ))}
                                         {topProductsWithNames.length === 0 && (
@@ -284,12 +302,12 @@ export default async function DashboardPage() {
                     <div className="flex flex-col gap-6">
 
                         {/* Food Cost Widget */}
-                        <div className="bg-white p-8 rounded-2xl border border-slate-100 shadow-[0_4px_20px_-2px_rgba(0,0,0,0.03)]">
+                        <div className="bg-white dark:bg-zinc-950 p-8 rounded-2xl border border-slate-100 dark:border-zinc-800 shadow-[0_4px_20px_-2px_rgba(0,0,0,0.03)] dark:shadow-none">
                             <div className="flex justify-between items-start mb-2">
-                                <h3 className="text-lg font-bold text-[#1e293b]">Cost %</h3>
-                                <div className="p-1 rounded-full hover:bg-slate-50 cursor-pointer">
-                                    <span className="material-symbols-outlined text-[#64748b] text-[20px]">more_horiz</span>
-                                </div>
+                                <h3 className="text-lg font-bold text-slate-800 dark:text-white">Cost %</h3>
+                                <button type="button" className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-zinc-800 cursor-pointer text-slate-500 dark:text-zinc-400">
+                                    <MoreHorizontal size={20} />
+                                </button>
                             </div>
                             <p className="text-sm text-[#64748b] mb-8">Current cost vs revenue ratio</p>
 
@@ -314,33 +332,29 @@ export default async function DashboardPage() {
                         </div>
 
                         {/* Low Stock Alerts */}
-                        <div className="bg-white p-8 rounded-2xl border border-slate-100 shadow-[0_4px_20px_-2px_rgba(0,0,0,0.03)] flex-1 flex flex-col">
+                        <div className="bg-white dark:bg-zinc-950 p-8 rounded-2xl border border-slate-100 dark:border-zinc-800 shadow-[0_4px_20px_-2px_rgba(0,0,0,0.03)] dark:shadow-none flex-1 flex flex-col">
                             <div className="flex items-center justify-between mb-6">
-                                <h3 className="text-lg font-bold text-[#1e293b]">Low Stock Alerts</h3>
+                                <h3 className="text-lg font-bold text-slate-800 dark:text-white">Low Stock Alerts</h3>
                                 <Link href="/inventory" className="text-xs font-semibold text-[#10b981] hover:text-[#059669] hover:underline">View All</Link>
                             </div>
 
                             <div className="flex flex-col gap-4 flex-1">
                                 {lowStockItems.map(item => {
-                                    // Assign a dynamic color/icon based on how low it is for visual appeal
                                     const isCritical = item.quantity <= 2;
-                                    const colorClass = isCritical ? "red" : "orange";
-                                    const themeColorHex = isCritical ? "#ef4444" : "#f97316";
-
                                     return (
-                                        <div key={item.id} className={`flex items-center gap-4 p-4 bg-white rounded-xl border ?{isCritical ? 'border-red-100' : 'border-orange-100'} hover:shadow-sm transition-shadow group`}>
-                                            <div className={`?{isCritical ? 'bg-red-50 text-red-500 group-hover:bg-red-100' : 'bg-orange-50 text-orange-500 group-hover:bg-orange-100'} p-2.5 rounded-lg transition-colors`}>
-                                                <span className="material-symbols-outlined text-[20px]">warning</span>
+                                        <div key={item.id} className={`flex items-center gap-4 p-4 bg-white rounded-xl border ${isCritical ? 'border-red-100' : 'border-orange-100'} hover:shadow-sm transition-shadow group`}>
+                                            <div className={`${isCritical ? 'bg-red-50 dark:bg-red-900/20 text-red-500 dark:text-red-400' : 'bg-orange-50 dark:bg-orange-900/20 text-orange-500 dark:text-orange-400'} p-2.5 rounded-lg transition-colors`}>
+                                                <AlertTriangle size={20} />
                                             </div>
                                             <div className="flex-1 min-w-0">
                                                 <div className="flex justify-between items-center mb-1">
                                                     <h4 className="text-sm font-semibold text-[#1e293b] truncate uppercase">{item.ingredient.name}</h4>
-                                                    <span className={`text-xs font-bold ?{isCritical ? 'text-red-600 bg-red-50' : 'text-orange-600 bg-orange-50'} px-1.5 py-0.5 rounded ml-2 whitespace-nowrap`}>
+                                                    <span className={`text-xs font-bold ${isCritical ? 'text-red-600 bg-red-50' : 'text-orange-600 bg-orange-50'} px-1.5 py-0.5 rounded ml-2 whitespace-nowrap`}>
                                                         {item.quantity.toFixed(1)} {item.ingredient.unit}
                                                     </span>
                                                 </div>
                                                 <div className="w-full bg-slate-100 rounded-full h-1.5 mt-1">
-                                                    <div className={`h-1.5 rounded-full ?{isCritical ? 'bg-red-500' : 'bg-orange-400'}`} style={{ width: `?{Math.min((item.quantity / lowStockThreshold) * 100, 100)}%` }}></div>
+                                                    <div className={`h-1.5 rounded-full ${isCritical ? 'bg-red-500' : 'bg-orange-400'}`} style={{ width: `${Math.min((item.quantity / lowStockThreshold) * 100, 100)}%` }}></div>
                                                 </div>
                                             </div>
                                         </div>
@@ -348,8 +362,8 @@ export default async function DashboardPage() {
                                 })}
 
                                 {lowStockItems.length === 0 && (
-                                    <div className="flex flex-col items-center justify-center flex-1 text-[#64748b] h-32">
-                                        <span className="material-symbols-outlined text-4xl opacity-50 mb-2">check_circle</span>
+                                    <div className="flex flex-col items-center justify-center flex-1 text-slate-500 dark:text-zinc-400 h-32">
+                                        <CheckCircle size={40} className="mb-2 text-emerald-500 dark:text-emerald-400 opacity-70" />
                                         <p className="text-sm">All stock levels look good!</p>
                                     </div>
                                 )}
