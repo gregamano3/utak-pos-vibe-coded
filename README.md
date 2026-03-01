@@ -213,6 +213,10 @@ If you don't have a PostgreSQL server, uncomment the `db` service and `db_data` 
 - `uploads_data` — Product images (mounted at `/app/public/uploads`)
 - `db_data` — Only if you uncomment the bundled PostgreSQL service
 
+### Portainer Build Failing?
+
+If the stack build fails in Portainer, ensure the build has enough memory (the Next.js build uses ~2–4 GB). In Portainer: Stack → build settings → increase memory limit, or add `NODE_OPTIONS=--max-old-space-size=4096` to the build args.
+
 ---
 
 ## Hosting (Production)

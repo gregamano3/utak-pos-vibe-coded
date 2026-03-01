@@ -16,11 +16,15 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
+# Dummy DATABASE_URL for Prisma generate (no DB connection during build)
+ENV DATABASE_URL="postgresql://placeholder:placeholder@localhost:5432/placeholder"
+
 # Generate Prisma client before building
 RUN npx prisma generate
 
-# Next.js build
-ENV NEXT_TELEMETRY_DISABLED 1
+# Next.js build (increase memory for low-RAM build environments e.g. Portainer)
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV NODE_OPTIONS="--max-old-space-size=4096"
 RUN npm run build
 
 # Production image, copy all the files and run next
