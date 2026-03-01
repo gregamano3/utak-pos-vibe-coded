@@ -2,7 +2,7 @@
 
 import { login } from "@/app/lib/actions/auth"
 import { useState } from "react"
-import { Store, Shield, UserCog, CreditCard, ChefHat, User } from "lucide-react"
+import { Store, Shield, UserCog, CreditCard, ChefHat, User, Loader2 } from "lucide-react"
 import { ThemeSwitcher } from "@/app/components/ThemeSwitcher"
 
 const DEMO_ACCOUNTS = [
@@ -76,9 +76,16 @@ export default function LoginPage() {
                     <button
                         type="submit"
                         disabled={!!loading}
-                        className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-3 rounded-xl transition-colors shadow-md disabled:opacity-50"
+                        className="w-full flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-3 rounded-xl transition-colors shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                        {loading === "form" ? "Signing in..." : "Sign In"}
+                        {loading === "form" ? (
+                            <>
+                                <Loader2 size={18} className="animate-spin" />
+                                Signing in...
+                            </>
+                        ) : (
+                            "Sign In"
+                        )}
                     </button>
                 </form>
                 </div>
@@ -96,12 +103,15 @@ export default function LoginPage() {
                                     <button
                                         type="submit"
                                         disabled={!!loading}
-                                        className={`w-full flex flex-col items-center gap-1.5 p-3 rounded-xl border transition-all ${acc.color} text-white disabled:opacity-50`}
+                                        className={`w-full flex flex-col items-center gap-1.5 p-3 rounded-xl border transition-all ${acc.color} text-white disabled:opacity-50 disabled:cursor-not-allowed`}
                                         title={`Login as ${acc.role}`}
                                     >
-                                        <Icon size={20} />
+                                        {isLoading ? (
+                                            <Loader2 size={20} className="animate-spin" />
+                                        ) : (
+                                            <Icon size={20} />
+                                        )}
                                         <span className="text-xs font-medium capitalize">{acc.role}</span>
-                                        {isLoading && <span className="text-[10px] animate-pulse">...</span>}
                                     </button>
                                 </form>
                             )

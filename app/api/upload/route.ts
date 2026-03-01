@@ -47,6 +47,7 @@ export async function POST(request: NextRequest) {
       .toBuffer()
 
     fs.writeFileSync(filepath, resized)
+    console.log("[upload] Saved:", { filename, filepath, dir: dir })
   } catch (err) {
     console.error("Image processing failed:", err)
     return NextResponse.json(
