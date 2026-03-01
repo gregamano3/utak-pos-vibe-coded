@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Staff &amp; Shift Management - Bistro POS</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: "#10b981", // Emerald 500
+              "primary-focus": "#059669", // Emerald 600
+              "background-light": "#f8fafc", // Slate 50
+              "surface-light": "#ffffff",
+              "border-light": "#e2e8f0", // Slate 200
+              "subtle-shadow": "rgba(0, 0, 0, 0.05)",
+            },
+            fontFamily: {
+              display: ["Inter", "sans-serif"],
+              sans: ["Inter", "sans-serif"],
+            },
+            boxShadow: {
+              'soft': '0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -1px rgba(0, 0, 0, 0.02)',
+              'card': '0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px 0 rgba(0, 0, 0, 0.03)',
+              'button': '0 2px 5px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.03)',
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #f8fafc;
+        }::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8; 
+        }
+    </style>
+</head>
+<body class="bg-background-light text-slate-800 font-display min-h-screen flex overflow-hidden">
+<nav class="w-64 border-r border-slate-200 flex-shrink-0 flex flex-col justify-between bg-surface-light overflow-y-auto hidden md:flex z-20 shadow-sm">
+<div class="flex flex-col gap-4 p-4">
+<div class="flex gap-3 items-center mb-4 px-2">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-xl size-10 shadow-sm" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAsl5R1H_Kxnj3dZQEzLIHGLgvieczgs5Lr3CpiU1PUtGWK-krG_BSSuON357bQTRBeSrkdqGn2JI_OMt4LvQlIB0tT-xI-MEQfj7Q1MLrYni8hwMSTTr3LckujIYTqWzAHbJ0ArrCova8Y-l_Xzpim3WSUbeOo9n2ltEw7PFvyV6DMrFErK5FgO9AwE3Gh2DXmh2kew04IJrgF6B49oMlm12ZYHiLePmAnjQ-u5kjXh8rgLsg1RY49vUS0xQxB5qUXXBw4f6DiJY5f");'></div>
+<div class="flex flex-col">
+<h1 class="text-slate-900 text-base font-bold leading-normal tracking-tight">Bistro POS</h1>
+<p class="text-slate-500 text-xs font-normal leading-normal">Downtown Branch</p>
+</div>
+</div>
+<div class="flex flex-col gap-1">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-all group" href="#">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary transition-colors">dashboard</span>
+<span class="text-sm font-medium">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-all group" href="#">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary transition-colors">restaurant_menu</span>
+<span class="text-sm font-medium">Menu</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-all group" href="#">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary transition-colors">inventory_2</span>
+<span class="text-sm font-medium">Inventory</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-emerald-50 text-emerald-700 shadow-sm border border-emerald-100" href="#">
+<span class="material-symbols-outlined text-emerald-600 fill-current">group</span>
+<span class="text-sm font-bold">Staff</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-all group" href="#">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary transition-colors">bar_chart</span>
+<span class="text-sm font-medium">Reports</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-all group" href="#">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary transition-colors">settings</span>
+<span class="text-sm font-medium">Settings</span>
+</a>
+</div>
+</div>
+<div class="p-4 border-t border-slate-100 bg-slate-50/50">
+<div class="flex items-center gap-3 px-2 py-2 rounded-lg hover:bg-white hover:shadow-sm cursor-pointer transition-all border border-transparent hover:border-slate-100">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-9 ring-2 ring-white shadow-sm" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDhDLTKu-r_PWfLzzBIVZkleKcf5Ni1mkp8c-8G1h1BubnLcwJEMrlz5A8NEvk-vISDmfTWZwCEOxOBh2l_LjHGf2dcatGkqW9oYeggn5QX-u_YXd1rILggIk-m5UvSW4OIqDC6Swnlce3gkdX3yTDVqhU1md16kFXP-zP4KXqNXtq24dH05vjUKGK3esG-MKh7bf4noeKqmd6iOOkRrlbxC0W-VwFloc8u5Dd6sodaaCcGVRLv17EakaQnzjNetyTKoHTrwq4tRgfB");'></div>
+<div class="flex flex-col">
+<p class="text-slate-900 text-sm font-semibold leading-none">James C.</p>
+<p class="text-slate-500 text-xs mt-1">Store Manager</p>
+</div>
+</div>
+</div>
+</nav>
+<main class="flex-1 flex flex-col h-full overflow-hidden bg-background-light relative">
+<header class="h-16 border-b border-slate-200 flex items-center justify-between px-6 bg-surface-light flex-shrink-0 z-10 sticky top-0 shadow-sm">
+<div>
+<h2 class="text-xl font-bold text-slate-900 tracking-tight">Staff &amp; Shift Management</h2>
+<p class="text-xs text-slate-500 hidden sm:block mt-0.5">Manage shifts, roles, and staff access</p>
+</div>
+<div class="flex items-center gap-3">
+<button class="flex items-center justify-center size-10 rounded-full hover:bg-slate-100 text-slate-500 hover:text-slate-700 transition-colors relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 size-2 bg-red-500 rounded-full border-2 border-white"></span>
+</button>
+<button class="bg-slate-900 hover:bg-slate-800 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors flex items-center gap-2 shadow-lg shadow-slate-900/10">
+<span class="material-symbols-outlined text-lg">add</span>
+<span>Add Staff</span>
+</button>
+</div>
+</header>
+<div class="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8 bg-slate-50/50">
+<div class="max-w-7xl mx-auto space-y-6">
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+<div class="bg-surface-light p-5 rounded-xl border border-slate-200 shadow-card hover:shadow-md transition-shadow">
+<div class="flex justify-between items-start mb-2">
+<span class="text-slate-500 text-sm font-medium">Active Staff</span>
+<span class="p-1.5 rounded-lg bg-blue-50 text-blue-600">
+<span class="material-symbols-outlined text-lg">group</span>
+</span>
+</div>
+<p class="text-3xl font-bold text-slate-900">8</p>
+<p class="text-xs text-emerald-600 mt-1 flex items-center gap-1 font-medium">
+<span class="material-symbols-outlined text-sm">trending_up</span> +2 from yesterday
+                    </p>
+</div>
+<div class="bg-surface-light p-5 rounded-xl border border-slate-200 shadow-card hover:shadow-md transition-shadow">
+<div class="flex justify-between items-start mb-2">
+<span class="text-slate-500 text-sm font-medium">Labor Cost (Est.)</span>
+<span class="p-1.5 rounded-lg bg-orange-50 text-orange-600">
+<span class="material-symbols-outlined text-lg">attach_money</span>
+</span>
+</div>
+<p class="text-3xl font-bold text-slate-900">$482.50</p>
+<p class="text-xs text-slate-500 mt-1">Based on clocked hours</p>
+</div>
+<div class="bg-surface-light p-5 rounded-xl border border-slate-200 shadow-card hover:shadow-md transition-shadow">
+<div class="flex justify-between items-start mb-2">
+<span class="text-slate-500 text-sm font-medium">Total Hours</span>
+<span class="p-1.5 rounded-lg bg-purple-50 text-purple-600">
+<span class="material-symbols-outlined text-lg">schedule</span>
+</span>
+</div>
+<p class="text-3xl font-bold text-slate-900">54h 20m</p>
+<p class="text-xs text-slate-500 mt-1">Today's aggregate</p>
+</div>
+<div class="bg-surface-light p-5 rounded-xl border border-slate-200 shadow-card hover:shadow-md transition-shadow">
+<div class="flex justify-between items-start mb-2">
+<span class="text-slate-500 text-sm font-medium">Issues</span>
+<span class="p-1.5 rounded-lg bg-red-50 text-red-600">
+<span class="material-symbols-outlined text-lg">warning</span>
+</span>
+</div>
+<p class="text-3xl font-bold text-slate-900">1</p>
+<p class="text-xs text-red-500 mt-1 font-medium">Late clock-in (Sarah J.)</p>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+<div class="lg:col-span-2 flex flex-col gap-6">
+<div class="bg-surface-light rounded-xl border border-slate-200 shadow-card overflow-hidden flex flex-col">
+<div class="px-6 py-5 border-b border-slate-100 flex justify-between items-center bg-white">
+<div>
+<h3 class="text-lg font-bold text-slate-900">Current Shift Status</h3>
+<p class="text-xs text-slate-500 mt-0.5">Real-time overview of staff activity.</p>
+</div>
+<div class="flex gap-2">
+<button class="px-3 py-1.5 text-xs font-semibold bg-white border border-slate-200 hover:bg-slate-50 hover:border-slate-300 rounded-lg text-slate-600 transition-colors shadow-sm">Export Log</button>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-slate-50/80 text-slate-500 text-xs uppercase tracking-wider font-semibold border-b border-slate-200">
+<th class="px-6 py-4 w-14"></th>
+<th class="px-6 py-4">Name &amp; Role</th>
+<th class="px-6 py-4">Clock In</th>
+<th class="px-6 py-4 text-right">Sales</th>
+<th class="px-6 py-4 text-center">Status</th>
+<th class="px-6 py-4 text-right"></th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-100 bg-white">
+<tr class="group hover:bg-slate-50 transition-colors">
+<td class="px-6 py-4 pl-6">
+<div class="size-10 rounded-full bg-cover bg-center shadow-sm border border-slate-100" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCcESk0Y6GKPYm7L-RPllbf5wT8eROfDOHtC2tL0OY7nQhtmjthT_rTUJB3-kP0GqqUV9ToV-q662mMmJ7dhdwtOSy0Qms_FsS9wApf2wzmWxjPwcqNdupS4pRML4KGjYnfi4dmXMMa0ZplsxNhXGMosp-3cT5zaHxZDeIcHIXp85DkuQeqqlOXfArwLjT79IN_eqigQm9kZmX9D1bSTUbTDkQ3dEEdxpbwF582S13Uk60Rfo9AUst5lg5iQQNPHRIG6F34t88y7n4S");'></div>
+</td>
+<td class="px-6 py-4">
+<div class="flex flex-col">
+<span class="text-slate-900 font-semibold text-sm">Sarah Jenkins</span>
+<span class="text-slate-500 text-xs mt-0.5">Manager</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<div class="flex flex-col">
+<span class="text-slate-700 text-sm font-medium">08:00 AM</span>
+<span class="text-emerald-600 text-[10px] font-medium bg-emerald-50 px-1.5 py-0.5 rounded w-fit mt-0.5">On time</span>
+</div>
+</td>
+<td class="px-6 py-4 text-right">
+<span class="text-slate-900 font-mono font-medium bg-slate-50 px-2 py-1 rounded">$1,240.50</span>
+</td>
+<td class="px-6 py-4 text-center">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-100/50 text-emerald-700 border border-emerald-100">
+<span class="size-1.5 rounded-full bg-emerald-500"></span>
+                                            Clocked In
+                                        </span>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="text-slate-400 hover:text-slate-600 p-1 hover:bg-slate-100 rounded-full transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</td>
+</tr>
+<tr class="group hover:bg-slate-50 transition-colors">
+<td class="px-6 py-4 pl-6">
+<div class="size-10 rounded-full bg-cover bg-center shadow-sm border border-slate-100" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDlpq9w9r7VAP9Tw4VY8wSJtJj8gev9gGqN_pCYxwRme2xrPaZZOeDCRH1I6eZS_RenoSAGRycpI_zzYeFpa2EzKL6wO6xgCVRVOdQT_3uxgKQkY4BjKyPNg2JEFt_BZOPDOKvJouUL4KzfpHGcaN8b4RzBbu5zxNOe7X8XLPaUpNB81i2Nez5bmuKISG5Sar8SRzTMimjc_kvCuhbPB2RZ9YYu64oZJgcwG_VFUcBzzXcj6wcX-l4GLYjVD9FEWDbbPXkhSBjpo411");'></div>
+</td>
+<td class="px-6 py-4">
+<div class="flex flex-col">
+<span class="text-slate-900 font-semibold text-sm">Michael Chen</span>
+<span class="text-slate-500 text-xs mt-0.5">Head Server</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<div class="flex flex-col">
+<span class="text-slate-700 text-sm font-medium">10:30 AM</span>
+<span class="text-emerald-600 text-[10px] font-medium bg-emerald-50 px-1.5 py-0.5 rounded w-fit mt-0.5">On time</span>
+</div>
+</td>
+<td class="px-6 py-4 text-right">
+<span class="text-slate-900 font-mono font-medium bg-slate-50 px-2 py-1 rounded">$650.00</span>
+</td>
+<td class="px-6 py-4 text-center">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-100/50 text-amber-700 border border-amber-100">
+<span class="size-1.5 rounded-full bg-amber-500"></span>
+                                            On Break
+                                        </span>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="text-slate-400 hover:text-slate-600 p-1 hover:bg-slate-100 rounded-full transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</td>
+</tr>
+<tr class="group hover:bg-slate-50 transition-colors">
+<td class="px-6 py-4 pl-6">
+<div class="size-10 rounded-full bg-cover bg-center shadow-sm border border-slate-100" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBhECYM7zf9d3jDfoB5YAqrC6ABFThjangVnjRbv4-dBwQUB8bsEOKnwoz8NMNws8iOZFMTPeO2GIsmT-vaa_ABjhsTM8tXlq6_960HTXJ1CYigYnoopNgpjoyPsjbZZ8tok-FIkToiFw0SVnxl0LTUgU51PBh2aKZpJpnyqrD4imlmgzo4V-VLQm9e-poe6q9-UFZts5MsdVpSc5GY07newzXAldDtAs_USAWanggTlF8XHdHvPAndbyz0Wxv_lwu_3q8sAKBA8sk_");'></div>
+</td>
+<td class="px-6 py-4">
+<div class="flex flex-col">
+<span class="text-slate-900 font-semibold text-sm">Jessica Wu</span>
+<span class="text-slate-500 text-xs mt-0.5">Cashier</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<div class="flex flex-col">
+<span class="text-slate-700 text-sm font-medium">11:00 AM</span>
+<span class="text-red-600 text-[10px] font-medium bg-red-50 px-1.5 py-0.5 rounded w-fit mt-0.5">Late (+15m)</span>
+</div>
+</td>
+<td class="px-6 py-4 text-right">
+<span class="text-slate-900 font-mono font-medium bg-slate-50 px-2 py-1 rounded">$669.50</span>
+</td>
+<td class="px-6 py-4 text-center">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-100/50 text-emerald-700 border border-emerald-100">
+<span class="size-1.5 rounded-full bg-emerald-500"></span>
+                                            Clocked In
+                                        </span>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="text-slate-400 hover:text-slate-600 p-1 hover:bg-slate-100 rounded-full transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="bg-surface-light rounded-xl border border-slate-200 shadow-card p-6">
+<div class="mb-5 flex justify-between items-end">
+<div>
+<h3 class="text-lg font-bold text-slate-900">Role Permissions</h3>
+<p class="text-sm text-slate-500 mt-1">Control access levels for different staff roles.</p>
+</div>
+<button class="text-sm text-primary font-medium hover:text-primary-focus">Manage Roles</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="p-5 rounded-xl bg-white border border-slate-200 shadow-sm">
+<div class="flex justify-between items-center mb-5">
+<div class="flex items-center gap-3">
+<div class="size-10 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600 border border-blue-100">
+<span class="material-symbols-outlined">point_of_sale</span>
+</div>
+<span class="font-bold text-slate-900 text-base">Cashier</span>
+</div>
+<button class="text-xs font-bold text-slate-400 hover:text-slate-600 transition-colors">EDIT</button>
+</div>
+<div class="space-y-4">
+<div class="flex items-center justify-between group">
+<span class="text-sm text-slate-600 font-medium">Process Refunds</span>
+<div class="w-11 h-6 bg-slate-200 rounded-full relative cursor-pointer transition-colors group-hover:bg-slate-300">
+<div class="absolute left-1 top-1 bg-white size-4 rounded-full shadow-sm transition-all"></div>
+</div>
+</div>
+<div class="flex items-center justify-between group">
+<span class="text-sm text-slate-600 font-medium">Apply Discounts</span>
+<div class="w-11 h-6 bg-emerald-500 rounded-full relative cursor-pointer shadow-sm">
+<div class="absolute right-1 top-1 bg-white size-4 rounded-full shadow-sm transition-all"></div>
+</div>
+</div>
+<div class="flex items-center justify-between group">
+<span class="text-sm text-slate-600 font-medium">View Daily Sales</span>
+<div class="w-11 h-6 bg-slate-200 rounded-full relative cursor-pointer transition-colors group-hover:bg-slate-300">
+<div class="absolute left-1 top-1 bg-white size-4 rounded-full shadow-sm transition-all"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="p-5 rounded-xl bg-white border border-slate-200 shadow-sm">
+<div class="flex justify-between items-center mb-5">
+<div class="flex items-center gap-3">
+<div class="size-10 rounded-lg bg-purple-50 flex items-center justify-center text-purple-600 border border-purple-100">
+<span class="material-symbols-outlined">manage_accounts</span>
+</div>
+<span class="font-bold text-slate-900 text-base">Manager</span>
+</div>
+<button class="text-xs font-bold text-slate-400 hover:text-slate-600 transition-colors">EDIT</button>
+</div>
+<div class="space-y-4">
+<div class="flex items-center justify-between group">
+<span class="text-sm text-slate-600 font-medium">Void Transactions</span>
+<div class="w-11 h-6 bg-emerald-500 rounded-full relative cursor-pointer shadow-sm">
+<div class="absolute right-1 top-1 bg-white size-4 rounded-full shadow-sm transition-all"></div>
+</div>
+</div>
+<div class="flex items-center justify-between group">
+<span class="text-sm text-slate-600 font-medium">Access Reports</span>
+<div class="w-11 h-6 bg-emerald-500 rounded-full relative cursor-pointer shadow-sm">
+<div class="absolute right-1 top-1 bg-white size-4 rounded-full shadow-sm transition-all"></div>
+</div>
+</div>
+<div class="flex items-center justify-between group">
+<span class="text-sm text-slate-600 font-medium">Edit Inventory</span>
+<div class="w-11 h-6 bg-emerald-500 rounded-full relative cursor-pointer shadow-sm">
+<div class="absolute right-1 top-1 bg-white size-4 rounded-full shadow-sm transition-all"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="lg:col-span-1 flex flex-col h-full">
+<div class="bg-surface-light rounded-xl border border-slate-200 shadow-card flex flex-col h-full relative overflow-hidden">
+<div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-400 to-emerald-600"></div>
+<div class="p-6 md:p-8 flex flex-col h-full items-center">
+<div class="text-center mb-8 w-full">
+<div class="inline-flex items-center justify-center p-3 bg-emerald-50 rounded-full mb-4 text-emerald-600 shadow-sm">
+<span class="material-symbols-outlined text-2xl">lock_clock</span>
+</div>
+<h3 class="text-2xl font-bold text-slate-900 mb-2">Time Clock</h3>
+<p class="text-slate-500 text-sm">Enter your 4-digit PIN</p>
+<div class="mt-6 flex justify-center gap-3">
+<div class="w-3.5 h-3.5 rounded-full bg-emerald-500 shadow-sm border border-emerald-600"></div>
+<div class="w-3.5 h-3.5 rounded-full bg-slate-200 shadow-inner"></div>
+<div class="w-3.5 h-3.5 rounded-full bg-slate-200 shadow-inner"></div>
+<div class="w-3.5 h-3.5 rounded-full bg-slate-200 shadow-inner"></div>
+</div>
+</div>
+<div class="flex-1 flex flex-col justify-center items-center w-full">
+<div class="grid grid-cols-3 gap-4 w-full max-w-[260px]">
+<button class="aspect-square rounded-2xl bg-white hover:bg-slate-50 hover:-translate-y-0.5 active:translate-y-0 transition-all text-xl font-bold text-slate-700 shadow-button border border-slate-100">1</button>
+<button class="aspect-square rounded-2xl bg-white hover:bg-slate-50 hover:-translate-y-0.5 active:translate-y-0 transition-all text-xl font-bold text-slate-700 shadow-button border border-slate-100">2</button>
+<button class="aspect-square rounded-2xl bg-white hover:bg-slate-50 hover:-translate-y-0.5 active:translate-y-0 transition-all text-xl font-bold text-slate-700 shadow-button border border-slate-100">3</button>
+<button class="aspect-square rounded-2xl bg-white hover:bg-slate-50 hover:-translate-y-0.5 active:translate-y-0 transition-all text-xl font-bold text-slate-700 shadow-button border border-slate-100">4</button>
+<button class="aspect-square rounded-2xl bg-white hover:bg-slate-50 hover:-translate-y-0.5 active:translate-y-0 transition-all text-xl font-bold text-slate-700 shadow-button border border-slate-100">5</button>
+<button class="aspect-square rounded-2xl bg-white hover:bg-slate-50 hover:-translate-y-0.5 active:translate-y-0 transition-all text-xl font-bold text-slate-700 shadow-button border border-slate-100">6</button>
+<button class="aspect-square rounded-2xl bg-white hover:bg-slate-50 hover:-translate-y-0.5 active:translate-y-0 transition-all text-xl font-bold text-slate-700 shadow-button border border-slate-100">7</button>
+<button class="aspect-square rounded-2xl bg-white hover:bg-slate-50 hover:-translate-y-0.5 active:translate-y-0 transition-all text-xl font-bold text-slate-700 shadow-button border border-slate-100">8</button>
+<button class="aspect-square rounded-2xl bg-white hover:bg-slate-50 hover:-translate-y-0.5 active:translate-y-0 transition-all text-xl font-bold text-slate-700 shadow-button border border-slate-100">9</button>
+<button class="aspect-square rounded-2xl flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition-colors">
+<span class="material-symbols-outlined text-2xl">backspace</span>
+</button>
+<button class="aspect-square rounded-2xl bg-white hover:bg-slate-50 hover:-translate-y-0.5 active:translate-y-0 transition-all text-xl font-bold text-slate-700 shadow-button border border-slate-100">0</button>
+<button class="aspect-square rounded-2xl flex items-center justify-center bg-emerald-500 hover:bg-emerald-600 text-white shadow-button shadow-emerald-200 transition-all active:scale-95 border border-emerald-600">
+<span class="material-symbols-outlined text-2xl">check</span>
+</button>
+</div>
+</div>
+</div>
+<div class="mt-auto border-t border-slate-100 bg-red-50/50 p-4">
+<div class="flex items-start gap-3">
+<div class="bg-white p-2 rounded-lg shadow-sm border border-red-100 text-red-500">
+<span class="material-symbols-outlined text-xl block">notifications_active</span>
+</div>
+<div>
+<p class="text-sm font-bold text-slate-800">Shift Alert</p>
+<p class="text-xs text-slate-500 mt-1 leading-relaxed">Evening shift starts in <span class="font-semibold text-red-600">30 mins</span>.<br/>2 scheduled staff are missing.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+
+</body></html>

@@ -1,0 +1,116 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  MANAGER
+  CASHIER
+  KITCHEN
+  STAFF
+}
+
+model User {
+  id        String   @id @default(uuid())
+  username  String   @unique
+  password  String
+  role      Role     @default(CASHIER)
+  pin       String?  // 4-digit pin for quick clock/in out
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  shifts    Shift[]
+  orders    Order[]
+}
+
+model Category {
+  id        String    @id @default(uuid())
+  name      String
+  products  Product[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Product {
+  id          String              @id @default(uuid())
+  name        String
+  price       Float
+  imageUrl    String?             // Path to uploaded image
+  categoryId  String
+  category    Category            @relation(fields: [categoryId], references: [id])
+  ingredients ProductIngredient[]
+  orderItems  OrderItem[]
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+}
+
+model Ingredient {
+  id         String              @id @default(uuid())
+  name       String
+  unit       String              // e.g., 'g', 'ml', 'pcs'
+  inventory  Inventory?
+  products   ProductIngredient[]
+  createdAt  DateTime            @default(now())
+  updatedAt  DateTime            @updatedAt
+}
+
+model ProductIngredient {
+  id           String     @id @default(uuid())
+  productId    String
+  ingredientId String
+  quantity     Float      // Amount of ingredient used
+  product      Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
+  ingredient   Ingredient @relation(fields: [ingredientId], references: [id], onDelete: Cascade)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  @@unique([productId, ingredientId])
+}
+
+model Inventory {
+  id           String     @id @default(uuid())
+  ingredientId String     @unique
+  quantity     Float      // Current stock
+  ingredient   Ingredient @relation(fields: [ingredientId], references: [id], onDelete: Cascade)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+}
+
+model Order {
+  id            String      @id @default(uuid())
+  totalAmount   Float
+  paymentMethod String      @default("CASH")
+  status        String      @default("COMPLETED")
+  userId        String?
+  user          User?       @relation(fields: [userId], references: [id])
+  items         OrderItem[]
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+}
+
+model OrderItem {
+  id        String   @id @default(uuid())
+  orderId   String
+  productId String
+  quantity  Int
+  price     Float    // Price at time of order
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Restrict)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Shift {
+  id        String    @id @default(uuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  clockIn   DateTime  @default(now())
+  clockOut  DateTime?
+  status    String    @default("ACTIVE") // ACTIVE or COMPLETED
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}

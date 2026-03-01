@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Supplier &amp; Purchase Management</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#059669", 
+                        "primary-hover": "#047857",
+                        "primary-light": "#d1fae5",
+                        "background-main": "#f3f4f6", 
+                        "surface-white": "#ffffff",
+                        "surface-accent": "#f9fafb",
+                        "text-main": "#1f2937", 
+                        "text-secondary": "#4b5563", 
+                        "text-muted": "#9ca3af",
+                        "border-color": "#e5e7eb", 
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"],
+                        "sans": ["Inter", "sans-serif"],
+                    },
+                    boxShadow: {
+                        "soft": "0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)",
+                        "card": "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)",
+                    }
+                },
+            },
+        }
+    </script>
+<style>::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f3f4f6;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #d1d5db;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #059669;
+        }
+    </style>
+</head>
+<body class="bg-background-main font-display text-text-main overflow-hidden h-screen flex flex-col antialiased">
+<header class="flex h-16 shrink-0 items-center justify-between border-b border-border-color bg-surface-white px-6 shadow-sm z-20">
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-3 text-primary">
+<span class="material-symbols-outlined text-3xl">inventory_2</span>
+<h1 class="text-xl font-bold tracking-tight text-text-main">SwiftStock</h1>
+</div>
+<label class="relative flex h-10 w-64 items-center">
+<div class="absolute left-3 flex items-center justify-center text-text-secondary">
+<span class="material-symbols-outlined text-[20px]">search</span>
+</div>
+<input class="h-full w-full rounded-lg border border-border-color bg-surface-accent pl-10 pr-4 text-sm text-text-main placeholder-text-muted focus:border-primary focus:ring-1 focus:ring-primary shadow-sm transition-all" placeholder="Search suppliers..." value=""/>
+</label>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-1 rounded-lg bg-surface-accent border border-border-color p-1">
+<button class="flex h-8 items-center gap-2 rounded px-3 text-sm font-semibold text-text-secondary hover:bg-white hover:text-primary transition-colors hover:shadow-sm">
+<span class="material-symbols-outlined text-[18px]">dashboard</span>
+<span>Dashboard</span>
+</button>
+<button class="flex h-8 items-center gap-2 rounded px-3 text-sm font-semibold bg-white text-primary shadow-sm border border-border-color">
+<span class="material-symbols-outlined text-[18px]">local_shipping</span>
+<span>Suppliers</span>
+</button>
+<button class="flex h-8 items-center gap-2 rounded px-3 text-sm font-semibold text-text-secondary hover:bg-white hover:text-primary transition-colors hover:shadow-sm">
+<span class="material-symbols-outlined text-[18px]">inventory</span>
+<span>Inventory</span>
+</button>
+</div>
+<div class="h-6 w-px bg-border-color"></div>
+<button class="relative flex h-10 w-10 items-center justify-center rounded-lg bg-surface-white border border-border-color text-text-secondary hover:bg-surface-accent hover:text-primary transition-colors shadow-sm">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute right-2 top-2 h-2 w-2 rounded-full bg-red-500 ring-2 ring-white"></span>
+</button>
+<button class="flex items-center gap-3 rounded-lg bg-surface-white pl-2 pr-4 py-1 hover:bg-surface-accent border border-transparent hover:border-border-color transition-colors">
+<div class="h-8 w-8 rounded-full bg-cover bg-center ring-2 ring-border-color" data-alt="User profile picture" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCdSsFcg1_7CsVpuqbOOyiDKaxS8_6BMmY99pnhLdpmIMOkT6dssZJtliCq8vpgYq0TQ56vyClWyx2xsEMAMi39MfgZYXnxJFH4YMA_akgyCt9MTs3oTcZhN_sAsCu-IQh1WRZyquLpQsZeoZv7d8Z0tO8REBNSjWFcdzfTraVAKhzdVRIWnAwXWzpRnkkRqWp63rvsNN3mc0F2fC5g4XXorRvteKZSANYo9dTT37pt2YgGLtJNjIhfRsIic7bT0mlUdSaSKZYMbGn3");'></div>
+<div class="flex flex-col items-start">
+<span class="text-xs font-medium text-text-main">Sarah Jenkins</span>
+<span class="text-[10px] text-primary font-semibold">Manager</span>
+</div>
+</button>
+</div>
+</header>
+<main class="flex flex-1 overflow-hidden bg-background-main">
+<section class="flex flex-1 flex-col overflow-hidden px-6 py-6">
+<div class="flex items-center justify-between mb-6">
+<div>
+<h2 class="text-2xl font-bold text-text-main">Supplier Management</h2>
+<p class="text-sm text-text-secondary mt-1">Manage vendor relationships and procurement.</p>
+</div>
+<button class="flex items-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-bold text-white shadow-md shadow-primary/20 hover:bg-primary-hover transition-colors">
+<span class="material-symbols-outlined text-[20px]">add_circle</span>
+            Create Purchase Order
+        </button>
+</div>
+<div class="flex gap-3 mb-6">
+<button class="flex h-9 items-center rounded-lg bg-white border border-border-color px-3 text-sm font-medium text-text-main shadow-sm hover:border-primary hover:text-primary">
+<span class="material-symbols-outlined mr-2 text-[18px]">filter_list</span> All Categories
+        </button>
+<button class="flex h-9 items-center rounded-lg bg-white border border-border-color px-3 text-sm font-medium text-text-main shadow-sm hover:border-primary hover:text-primary">
+<span class="material-symbols-outlined mr-2 text-[18px]">attach_money</span> Balance Due
+        </button>
+<button class="flex h-9 items-center rounded-lg bg-white border border-border-color px-3 text-sm font-medium text-text-main shadow-sm hover:border-primary hover:text-primary">
+<span class="material-symbols-outlined mr-2 text-[18px]">star</span> Preferred
+        </button>
+</div>
+<div class="flex-1 overflow-hidden rounded-xl border border-border-color bg-surface-white shadow-sm flex flex-col">
+<div class="overflow-y-auto">
+<table class="w-full text-left border-collapse">
+<thead class="sticky top-0 bg-surface-accent z-10 text-xs font-semibold uppercase text-text-secondary tracking-wider">
+<tr>
+<th class="px-6 py-4 border-b border-border-color">Supplier Name</th>
+<th class="px-6 py-4 border-b border-border-color">Contact Person</th>
+<th class="px-6 py-4 border-b border-border-color">Primary Category</th>
+<th class="px-6 py-4 border-b border-border-color text-right">Balance Due</th>
+<th class="px-6 py-4 border-b border-border-color text-center">Status</th>
+<th class="px-6 py-4 border-b border-border-color text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-border-color text-sm text-text-main">
+<tr class="group hover:bg-surface-accent transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="h-10 w-10 rounded-full bg-emerald-100 flex items-center justify-center text-primary font-bold text-lg">
+                                    F
+                                </div>
+<div>
+<div class="font-bold">FreshFields Produce</div>
+<div class="text-xs text-text-secondary">ID: SUP-001</div>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<div class="flex flex-col">
+<span class="font-medium">John Smith</span>
+<span class="text-xs text-text-secondary">john@freshfields.com</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center gap-1.5 rounded-full bg-green-50 px-2.5 py-1 text-xs font-medium text-green-700 border border-green-100">
+<span class="h-1.5 w-1.5 rounded-full bg-green-600"></span>
+                                Produce
+                            </span>
+</td>
+<td class="px-6 py-4 text-right font-medium">$1,240.50</td>
+<td class="px-6 py-4 text-center">
+<span class="rounded-full bg-emerald-100 text-emerald-800 px-2 py-1 text-xs font-bold">Active</span>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="text-text-secondary hover:text-primary p-1 rounded-md hover:bg-white transition-colors">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</td>
+</tr>
+<tr class="group hover:bg-surface-accent transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold text-lg">
+                                    P
+                                </div>
+<div>
+<div class="font-bold">Prime Meats Ltd</div>
+<div class="text-xs text-text-secondary">ID: SUP-002</div>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<div class="flex flex-col">
+<span class="font-medium">Mike Johnson</span>
+<span class="text-xs text-text-secondary">orders@primemeats.com</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center gap-1.5 rounded-full bg-red-50 px-2.5 py-1 text-xs font-medium text-red-700 border border-red-100">
+<span class="h-1.5 w-1.5 rounded-full bg-red-600"></span>
+                                Meat &amp; Poultry
+                            </span>
+</td>
+<td class="px-6 py-4 text-right font-medium">$450.00</td>
+<td class="px-6 py-4 text-center">
+<span class="rounded-full bg-emerald-100 text-emerald-800 px-2 py-1 text-xs font-bold">Active</span>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="text-text-secondary hover:text-primary p-1 rounded-md hover:bg-white transition-colors">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</td>
+</tr>
+<tr class="group hover:bg-surface-accent transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="h-10 w-10 rounded-full bg-yellow-100 flex items-center justify-center text-yellow-700 font-bold text-lg">
+                                    D
+                                </div>
+<div>
+<div class="font-bold">Dairy Delights Co.</div>
+<div class="text-xs text-text-secondary">ID: SUP-003</div>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<div class="flex flex-col">
+<span class="font-medium">Sarah Lee</span>
+<span class="text-xs text-text-secondary">sarah@dairydelights.com</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center gap-1.5 rounded-full bg-yellow-50 px-2.5 py-1 text-xs font-medium text-yellow-700 border border-yellow-100">
+<span class="h-1.5 w-1.5 rounded-full bg-yellow-600"></span>
+                                Dairy
+                            </span>
+</td>
+<td class="px-6 py-4 text-right font-medium text-red-600 font-bold">$2,890.00</td>
+<td class="px-6 py-4 text-center">
+<span class="rounded-full bg-yellow-100 text-yellow-800 px-2 py-1 text-xs font-bold">Review</span>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="text-text-secondary hover:text-primary p-1 rounded-md hover:bg-white transition-colors">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</td>
+</tr>
+<tr class="group hover:bg-surface-accent transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="h-10 w-10 rounded-full bg-purple-100 flex items-center justify-center text-purple-700 font-bold text-lg">
+                                    B
+                                </div>
+<div>
+<div class="font-bold">Bean &amp; Leaf Roasters</div>
+<div class="text-xs text-text-secondary">ID: SUP-004</div>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<div class="flex flex-col">
+<span class="font-medium">David Chen</span>
+<span class="text-xs text-text-secondary">david@beanleaf.com</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center gap-1.5 rounded-full bg-purple-50 px-2.5 py-1 text-xs font-medium text-purple-700 border border-purple-100">
+<span class="h-1.5 w-1.5 rounded-full bg-purple-600"></span>
+                                Beverages
+                            </span>
+</td>
+<td class="px-6 py-4 text-right font-medium">$0.00</td>
+<td class="px-6 py-4 text-center">
+<span class="rounded-full bg-emerald-100 text-emerald-800 px-2 py-1 text-xs font-bold">Active</span>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="text-text-secondary hover:text-primary p-1 rounded-md hover:bg-white transition-colors">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</td>
+</tr>
+<tr class="group hover:bg-surface-accent transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="h-10 w-10 rounded-full bg-orange-100 flex items-center justify-center text-orange-700 font-bold text-lg">
+                                    G
+                                </div>
+<div>
+<div class="font-bold">Global Spices Inc.</div>
+<div class="text-xs text-text-secondary">ID: SUP-005</div>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<div class="flex flex-col">
+<span class="font-medium">Amara Singh</span>
+<span class="text-xs text-text-secondary">amara@globalspices.com</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center gap-1.5 rounded-full bg-orange-50 px-2.5 py-1 text-xs font-medium text-orange-700 border border-orange-100">
+<span class="h-1.5 w-1.5 rounded-full bg-orange-600"></span>
+                                Dry Goods
+                            </span>
+</td>
+<td class="px-6 py-4 text-right font-medium">$320.15</td>
+<td class="px-6 py-4 text-center">
+<span class="rounded-full bg-emerald-100 text-emerald-800 px-2 py-1 text-xs font-bold">Active</span>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="text-text-secondary hover:text-primary p-1 rounded-md hover:bg-white transition-colors">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="bg-surface-white border-t border-border-color p-3 flex items-center justify-between">
+<span class="text-xs text-text-secondary">Showing 1-5 of 24 suppliers</span>
+<div class="flex gap-2">
+<button class="h-8 w-8 flex items-center justify-center rounded border border-border-color text-text-secondary hover:bg-surface-accent disabled:opacity-50" disabled="">
+<span class="material-symbols-outlined text-[18px]">chevron_left</span>
+</button>
+<button class="h-8 w-8 flex items-center justify-center rounded border border-border-color text-text-secondary hover:bg-surface-accent">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+<aside class="flex w-[380px] shrink-0 flex-col bg-surface-white border-l border-border-color shadow-[0_0_20px_rgba(0,0,0,0.03)] z-10">
+<div class="flex flex-col border-b border-border-color p-6 pb-4 bg-surface-white">
+<div class="flex items-center justify-between mb-2">
+<h2 class="text-lg font-bold text-text-main flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">history</span>
+                Recent Orders
+            </h2>
+<button class="text-xs font-semibold text-primary hover:text-primary-hover">View All</button>
+</div>
+<p class="text-xs text-text-secondary">Track your latest procurement activities.</p>
+</div>
+<div class="flex-1 overflow-y-auto p-5 space-y-4 bg-surface-accent/30">
+<div class="flex flex-col gap-3 rounded-xl bg-white p-4 border border-border-color shadow-sm hover:shadow-md transition-all cursor-pointer group">
+<div class="flex items-start justify-between">
+<div class="flex flex-col">
+<span class="font-bold text-text-main text-sm">PO-2023-1024</span>
+<span class="text-xs font-medium text-text-secondary mt-0.5">FreshFields Produce</span>
+</div>
+<span class="rounded-full bg-amber-100 px-2.5 py-1 text-[10px] font-bold text-amber-800 uppercase tracking-wide border border-amber-200">Pending</span>
+</div>
+<div class="flex items-center justify-between pt-2 border-t border-dashed border-gray-100">
+<span class="text-xs text-text-muted">Oct 24, 2023</span>
+<span class="font-bold text-text-main text-sm">$842.00</span>
+</div>
+</div>
+<div class="flex flex-col gap-3 rounded-xl bg-white p-4 border border-border-color shadow-sm hover:shadow-md transition-all cursor-pointer group">
+<div class="flex items-start justify-between">
+<div class="flex flex-col">
+<span class="font-bold text-text-main text-sm">PO-2023-1022</span>
+<span class="text-xs font-medium text-text-secondary mt-0.5">Prime Meats Ltd</span>
+</div>
+<span class="rounded-full bg-blue-100 px-2.5 py-1 text-[10px] font-bold text-blue-800 uppercase tracking-wide border border-blue-200">In Transit</span>
+</div>
+<div class="flex items-center justify-between pt-2 border-t border-dashed border-gray-100">
+<span class="text-xs text-text-muted">Oct 22, 2023</span>
+<span class="font-bold text-text-main text-sm">$1,250.00</span>
+</div>
+</div>
+<div class="flex flex-col gap-3 rounded-xl bg-white p-4 border border-border-color shadow-sm hover:shadow-md transition-all cursor-pointer group">
+<div class="flex items-start justify-between">
+<div class="flex flex-col">
+<span class="font-bold text-text-main text-sm">PO-2023-1019</span>
+<span class="text-xs font-medium text-text-secondary mt-0.5">Dairy Delights Co.</span>
+</div>
+<span class="rounded-full bg-emerald-100 px-2.5 py-1 text-[10px] font-bold text-emerald-800 uppercase tracking-wide border border-emerald-200">Received</span>
+</div>
+<div class="flex items-center justify-between pt-2 border-t border-dashed border-gray-100">
+<span class="text-xs text-text-muted">Oct 19, 2023</span>
+<span class="font-bold text-text-main text-sm">$345.50</span>
+</div>
+</div>
+<div class="flex flex-col gap-3 rounded-xl bg-white p-4 border border-border-color shadow-sm hover:shadow-md transition-all cursor-pointer group">
+<div class="flex items-start justify-between">
+<div class="flex flex-col">
+<span class="font-bold text-text-main text-sm">PO-2023-1018</span>
+<span class="text-xs font-medium text-text-secondary mt-0.5">Bean &amp; Leaf Roasters</span>
+</div>
+<span class="rounded-full bg-emerald-100 px-2.5 py-1 text-[10px] font-bold text-emerald-800 uppercase tracking-wide border border-emerald-200">Received</span>
+</div>
+<div class="flex items-center justify-between pt-2 border-t border-dashed border-gray-100">
+<span class="text-xs text-text-muted">Oct 18, 2023</span>
+<span class="font-bold text-text-main text-sm">$120.00</span>
+</div>
+</div>
+</div>
+<div class="mt-auto border-t border-border-color bg-surface-white p-5 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.02)]">
+<h3 class="text-xs font-bold text-text-secondary uppercase mb-3 tracking-wider">Monthly Procurement</h3>
+<div class="grid grid-cols-2 gap-3 mb-4">
+<div class="bg-surface-accent rounded-lg p-3 border border-border-color">
+<div class="text-xs text-text-secondary mb-1">Total Spent</div>
+<div class="text-lg font-bold text-text-main">$12,450</div>
+</div>
+<div class="bg-surface-accent rounded-lg p-3 border border-border-color">
+<div class="text-xs text-text-secondary mb-1">Open Orders</div>
+<div class="text-lg font-bold text-primary">5</div>
+</div>
+</div>
+<button class="flex w-full items-center justify-center gap-2 rounded-xl bg-white border border-border-color px-4 py-3 font-semibold text-text-main hover:bg-surface-accent hover:text-primary transition-all shadow-sm">
+<span class="material-symbols-outlined text-[20px]">file_download</span>
+            Download Reports
+        </button>
+</div>
+</aside>
+</main>
+</body></html>

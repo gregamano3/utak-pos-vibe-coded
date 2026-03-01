@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Waste Logging &amp; Adjustments</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#059669", 
+                        "primary-hover": "#047857",
+                        "primary-light": "#d1fae5",
+                        "background-main": "#f3f4f6", 
+                        "surface-white": "#ffffff",
+                        "surface-accent": "#f9fafb",
+                        "text-main": "#1f2937", 
+                        "text-secondary": "#4b5563", 
+                        "text-muted": "#9ca3af",
+                        "border-color": "#e5e7eb", 
+                        "danger": "#ef4444",
+                        "warning": "#f59e0b",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"],
+                        "sans": ["Inter", "sans-serif"],
+                    },
+                    boxShadow: {
+                        "soft": "0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)",
+                        "card": "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)",
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f3f4f6;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #d1d5db;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #059669;
+        }
+    </style>
+</head>
+<body class="bg-background-main font-display text-text-main overflow-hidden h-screen flex flex-col antialiased">
+<header class="flex h-16 shrink-0 items-center justify-between border-b border-border-color bg-surface-white px-6 shadow-sm z-20">
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-3 text-primary">
+<span class="material-symbols-outlined text-3xl">inventory_2</span>
+<h1 class="text-xl font-bold tracking-tight text-text-main">SwiftStock</h1>
+</div>
+<nav class="hidden md:flex items-center gap-1">
+<a class="px-3 py-2 text-sm font-medium text-text-secondary hover:text-primary hover:bg-surface-accent rounded-md transition-colors" href="#">Dashboard</a>
+<a class="px-3 py-2 text-sm font-medium text-text-secondary hover:text-primary hover:bg-surface-accent rounded-md transition-colors" href="#">Inventory</a>
+<a class="px-3 py-2 text-sm font-bold text-primary bg-surface-accent rounded-md transition-colors" href="#">Waste Log</a>
+<a class="px-3 py-2 text-sm font-medium text-text-secondary hover:text-primary hover:bg-surface-accent rounded-md transition-colors" href="#">Reports</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="relative flex h-10 w-10 items-center justify-center rounded-lg bg-surface-white border border-border-color text-text-secondary hover:bg-surface-accent hover:text-primary transition-colors shadow-sm">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute right-2 top-2 h-2 w-2 rounded-full bg-red-500 ring-2 ring-white"></span>
+</button>
+<div class="h-8 w-px bg-border-color"></div>
+<button class="flex items-center gap-3 rounded-lg bg-surface-white pl-2 pr-4 py-1 hover:bg-surface-accent border border-transparent hover:border-border-color transition-colors">
+<div class="h-8 w-8 rounded-full bg-cover bg-center ring-2 ring-border-color" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCdSsFcg1_7CsVpuqbOOyiDKaxS8_6BMmY99pnhLdpmIMOkT6dssZJtliCq8vpgYq0TQ56vyClWyx2xsEMAMi39MfgZYXnxJFH4YMA_akgyCt9MTs3oTcZhN_sAsCu-IQh1WRZyquLpQsZeoZv7d8Z0tO8REBNSjWFcdzfTraVAKhzdVRIWnAwXWzpRnkkRqWp63rvsNN3mc0F2fC5g4XXorRvteKZSANYo9dTT37pt2YgGLtJNjIhfRsIic7bT0mlUdSaSKZYMbGn3");'></div>
+<div class="flex flex-col items-start">
+<span class="text-xs font-medium text-text-main">Sarah Jenkins</span>
+<span class="text-[10px] text-primary font-semibold">Manager</span>
+</div>
+</button>
+</div>
+</header>
+<main class="flex flex-1 overflow-hidden bg-background-main">
+<section class="flex flex-1 flex-col overflow-y-auto p-6 md:pr-0">
+<div class="flex flex-col lg:flex-row gap-6 h-full">
+<div class="w-full lg:w-2/3 flex flex-col gap-6">
+<div class="bg-surface-white rounded-xl shadow-card border border-border-color p-6">
+<div class="flex items-center justify-between mb-6">
+<div>
+<h2 class="text-lg font-bold text-text-main">Log New Waste</h2>
+<p class="text-sm text-text-secondary">Record ingredient waste to adjust inventory levels.</p>
+</div>
+<span class="material-symbols-outlined text-text-muted text-4xl">delete_sweep</span>
+</div>
+<form class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="md:col-span-2">
+<label class="block text-sm font-semibold text-text-main mb-2">Ingredient / Item</label>
+<div class="relative">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted material-symbols-outlined text-[20px]">search</span>
+<input class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-border-color bg-surface-accent focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-sm" placeholder="Search for tomatoes, milk, steak..." type="text"/>
+</div>
+</div>
+<div>
+<label class="block text-sm font-semibold text-text-main mb-2">Quantity</label>
+<div class="flex">
+<input class="w-full rounded-l-lg border border-border-color bg-surface-accent px-4 py-2.5 focus:border-primary focus:ring-1 focus:ring-primary outline-none text-sm font-medium" placeholder="0.00" type="number"/>
+<select class="rounded-r-lg border-l-0 border border-border-color bg-gray-50 px-3 py-2.5 text-sm font-medium text-text-secondary focus:border-primary focus:ring-1 focus:ring-primary outline-none">
+<option>kg</option>
+<option>L</option>
+<option>pcs</option>
+<option>oz</option>
+<option>g</option>
+</select>
+</div>
+</div>
+<div>
+<label class="block text-sm font-semibold text-text-main mb-2">Reason Code</label>
+<select class="w-full rounded-lg border border-border-color bg-surface-accent px-4 py-2.5 text-sm text-text-main focus:border-primary focus:ring-1 focus:ring-primary outline-none appearance-none">
+<option disabled="" selected="" value="">Select a reason...</option>
+<option value="spoiled">Spoiled / Rotten</option>
+<option value="damaged">Damaged in Handling</option>
+<option value="expired">Expired Date</option>
+<option value="production">Production Error</option>
+<option value="customer">Customer Complaint</option>
+<option value="theft">Theft / Loss</option>
+</select>
+</div>
+<div class="md:col-span-2">
+<label class="block text-sm font-semibold text-text-main mb-2">Notes (Optional)</label>
+<textarea class="w-full rounded-lg border border-border-color bg-surface-accent px-4 py-2.5 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none resize-none" placeholder="Add specific details about the incident..." rows="2"></textarea>
+</div>
+<div class="md:col-span-2 flex justify-end gap-3 mt-2">
+<button class="px-5 py-2.5 rounded-lg text-sm font-semibold text-text-secondary hover:bg-gray-100 transition-colors" type="button">Cancel</button>
+<button class="px-6 py-2.5 rounded-lg text-sm font-bold text-white bg-primary hover:bg-primary-hover shadow-md shadow-primary/20 transition-all flex items-center gap-2" type="button">
+<span class="material-symbols-outlined text-[18px]">save</span>
+                                    Submit Adjustment
+                                </button>
+</div>
+</form>
+</div>
+<div class="flex-1 bg-surface-white rounded-xl shadow-card border border-border-color flex flex-col min-h-[300px]">
+<div class="p-5 border-b border-border-color flex items-center justify-between">
+<h3 class="font-bold text-text-main">Recent Adjustments</h3>
+<div class="flex gap-2">
+<button class="p-1.5 text-text-secondary hover:text-primary hover:bg-surface-accent rounded transition-colors"><span class="material-symbols-outlined text-[20px]">filter_list</span></button>
+<button class="p-1.5 text-text-secondary hover:text-primary hover:bg-surface-accent rounded transition-colors"><span class="material-symbols-outlined text-[20px]">download</span></button>
+</div>
+</div>
+<div class="overflow-auto flex-1">
+<table class="w-full text-sm text-left">
+<thead class="text-xs text-text-secondary uppercase bg-surface-accent sticky top-0">
+<tr>
+<th class="px-5 py-3 font-semibold">Time</th>
+<th class="px-5 py-3 font-semibold">Item</th>
+<th class="px-5 py-3 font-semibold">Reason</th>
+<th class="px-5 py-3 font-semibold text-right">Qty</th>
+<th class="px-5 py-3 font-semibold text-right">Cost</th>
+<th class="px-5 py-3 font-semibold text-center">User</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-border-color">
+<tr class="hover:bg-surface-accent/50 transition-colors">
+<td class="px-5 py-3.5 text-text-secondary">10:42 AM</td>
+<td class="px-5 py-3.5 font-medium text-text-main">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded bg-gray-200 bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCRAC3EqlqA_quUvxm1dYNpHYmzH2XB8Z8KQ2M2dKlWiuX_9n0vWQhiDNrIaJmtIM6dOPqD8tTOF23VL5o1cop6wpSCMvKLhgiUzm-WPDICGHnlPLwaPnq9j-tEQNMpc7dryBMRt-6689NOkk0-6QyBQqLfm3n9uFUoUFeI7cu9xZ-nYUI0gujJIgDdAfiRESUTxscAxj8XlkDGvej6gXOg6l04VM1IjO12zOYqfg47q8JkKwC_80p64f5C6q8EZsp9ZYXTdTSDPifZ");'></div>
+                                                Romaine Lettuce
+                                            </div>
+</td>
+<td class="px-5 py-3.5"><span class="inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">Spoiled</span></td>
+<td class="px-5 py-3.5 text-right font-mono text-text-secondary">-2.5 kg</td>
+<td class="px-5 py-3.5 text-right font-mono font-medium text-text-main">$12.50</td>
+<td class="px-5 py-3.5 text-center"><span class="text-xs bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded border border-gray-200">SJ</span></td>
+</tr>
+<tr class="hover:bg-surface-accent/50 transition-colors">
+<td class="px-5 py-3.5 text-text-secondary">09:15 AM</td>
+<td class="px-5 py-3.5 font-medium text-text-main">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded bg-gray-200 bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDKTnzYInmh_vZpYNkm9fX62rnEEhdEkKa_sbouPqRv-tRAkyq6cmcNyuGhL9ERzMPwv13FHyz7f0tmnOEKmYjwcfyv1e21rUIpSiEGKHgp97EVgL5WuRcvjqfPWcKY7hvFGHiooA3G_-8AfWShhCOdFfWrBM_q4Li1XswFZbpcsxoAasTWDsV0MsADKbwjucBe4PY-PfPZQiRirTEWNreFfRqw1rnflDp2otS78hbcJUFMfqz2yDM7SvXjJOUae-3qSzum2W5-GOvA");'></div>
+                                                Choco Cake
+                                            </div>
+</td>
+<td class="px-5 py-3.5"><span class="inline-flex items-center rounded-md bg-yellow-50 px-2 py-1 text-xs font-medium text-yellow-800 ring-1 ring-inset ring-yellow-600/20">Damaged</span></td>
+<td class="px-5 py-3.5 text-right font-mono text-text-secondary">-1 pcs</td>
+<td class="px-5 py-3.5 text-right font-mono font-medium text-text-main">$4.20</td>
+<td class="px-5 py-3.5 text-center"><span class="text-xs bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded border border-gray-200">MK</span></td>
+</tr>
+<tr class="hover:bg-surface-accent/50 transition-colors">
+<td class="px-5 py-3.5 text-text-secondary">Yesterday</td>
+<td class="px-5 py-3.5 font-medium text-text-main">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded bg-gray-200 bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuANosjSU_om4AG97O5irKHLmwQ8s3caXVsgMdQGRN3cdSHoKrNlfd58Ecv8d6bj3PvE83Ffvjo3dx6CE45rwDnTqJ8QR45mZud1E9ZAa9yW9BHjaF-UdDemehH9eDXQCKC0wggBmyq_pgPpKJ7pmvp69lEC94B1PBKfnC9QjPcJORgOD2aQ2DMyAjBDKd-gh1Ui8Pg_M5mVLpO3ezNKkJW8CPBu7TYh93Ta3mhQVAEiRWBN9CfZWUnGG5w7oRek2NK5eZbbTqWYYlgv");'></div>
+                                                Whole Milk
+                                            </div>
+</td>
+<td class="px-5 py-3.5"><span class="inline-flex items-center rounded-md bg-orange-50 px-2 py-1 text-xs font-medium text-orange-800 ring-1 ring-inset ring-orange-600/20">Expired</span></td>
+<td class="px-5 py-3.5 text-right font-mono text-text-secondary">-4 L</td>
+<td class="px-5 py-3.5 text-right font-mono font-medium text-text-main">$5.60</td>
+<td class="px-5 py-3.5 text-center"><span class="text-xs bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded border border-gray-200">SJ</span></td>
+</tr>
+<tr class="hover:bg-surface-accent/50 transition-colors">
+<td class="px-5 py-3.5 text-text-secondary">Yesterday</td>
+<td class="px-5 py-3.5 font-medium text-text-main">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded bg-gray-200 bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBX0__YLp7Mx5pWKYe1JQP7nHqLoSkXc8K-Kpx84-4uOFdBCsl31QGkoERCUZIedyhcLWbW4SZcfe4cJnEukXwi_Iew3If-AVbQAwoHsqpMzMYnpPeernnkUMT7AfD1cWgdAPLQkdWd3ySIxSJvx3XUttU9L8mzwWFLzyROwu11khem8bDMLxF5bNSHFnvdTMm9orRDvRQ5u-8pnkK4P94cWfbtdj5FQsHtWOI9ea3zHrSYhcsvGq7KN3RThplwvha4xVxxiK3kInOU");'></div>
+                                                Burger Buns
+                                            </div>
+</td>
+<td class="px-5 py-3.5"><span class="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10">Production</span></td>
+<td class="px-5 py-3.5 text-right font-mono text-text-secondary">-6 pcs</td>
+<td class="px-5 py-3.5 text-right font-mono font-medium text-text-main">$3.00</td>
+<td class="px-5 py-3.5 text-center"><span class="text-xs bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded border border-gray-200">MK</span></td>
+</tr>
+<tr class="hover:bg-surface-accent/50 transition-colors">
+<td class="px-5 py-3.5 text-text-secondary">Yesterday</td>
+<td class="px-5 py-3.5 font-medium text-text-main">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded bg-gray-200 bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDPrfULrAVnP5-JY-xTllUVlo5kcKaeAzsocoIqg9YTgufsHB0RJIuGAcA3TEWdTtWzdjKx6tMhDQ55BSzYn-ljCFxqKWP_sS4x3DNK0SfHfL6X8OQ_lsSaQYGJpaXLXy9Dgi4X-JM2i2eBJzOVa5Ijehj3teOLEDeEBKcNtPB9pUNGrZ2oEhH0m0HCZY2EaClsRcsFkNAFkMaV5uuaeWZvPUA5qYpHnVDPyDFO2ZZ-zF52aY98mGA2yPq6Gg6NbV_G3W5rrPkKlgrF");'></div>
+                                                Raw Chicken
+                                            </div>
+</td>
+<td class="px-5 py-3.5"><span class="inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">Spoiled</span></td>
+<td class="px-5 py-3.5 text-right font-mono text-text-secondary">-2.0 kg</td>
+<td class="px-5 py-3.5 text-right font-mono font-medium text-text-main">$18.00</td>
+<td class="px-5 py-3.5 text-center"><span class="text-xs bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded border border-gray-200">SJ</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<aside class="w-full lg:w-1/3 shrink-0 flex flex-col gap-6 lg:pb-6 pr-6">
+<div class="bg-gradient-to-br from-primary to-primary-hover rounded-xl shadow-lg p-6 text-white relative overflow-hidden">
+<div class="absolute -right-4 -top-4 w-24 h-24 bg-white/10 rounded-full blur-2xl"></div>
+<div class="relative z-10">
+<h2 class="text-primary-light text-sm font-semibold uppercase tracking-wider mb-1">Today's Waste Value</h2>
+<div class="flex items-baseline gap-2 mb-4">
+<span class="text-4xl font-bold">$43.30</span>
+<span class="text-sm bg-white/20 px-2 py-0.5 rounded text-white font-medium flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">trending_up</span> 12%
+                                </span>
+</div>
+<div class="grid grid-cols-2 gap-4 border-t border-white/20 pt-4">
+<div>
+<span class="block text-primary-light text-xs mb-1">Items Logged</span>
+<span class="text-lg font-bold">14</span>
+</div>
+<div>
+<span class="block text-primary-light text-xs mb-1">This Week</span>
+<span class="text-lg font-bold">$189.50</span>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-surface-white rounded-xl shadow-card border border-border-color p-6 flex-1">
+<h3 class="font-bold text-text-main mb-4">Cost Leakage by Reason</h3>
+<div class="space-y-4">
+<div class="group">
+<div class="flex justify-between text-xs mb-1.5">
+<span class="font-medium text-text-secondary">Spoiled / Rotten</span>
+<span class="font-bold text-text-main">$84.20</span>
+</div>
+<div class="h-2.5 w-full bg-gray-100 rounded-full overflow-hidden">
+<div class="h-full bg-red-500 rounded-full w-[45%]"></div>
+</div>
+</div>
+<div class="group">
+<div class="flex justify-between text-xs mb-1.5">
+<span class="font-medium text-text-secondary">Expired Date</span>
+<span class="font-bold text-text-main">$42.10</span>
+</div>
+<div class="h-2.5 w-full bg-gray-100 rounded-full overflow-hidden">
+<div class="h-full bg-orange-400 rounded-full w-[25%]"></div>
+</div>
+</div>
+<div class="group">
+<div class="flex justify-between text-xs mb-1.5">
+<span class="font-medium text-text-secondary">Production Error</span>
+<span class="font-bold text-text-main">$32.50</span>
+</div>
+<div class="h-2.5 w-full bg-gray-100 rounded-full overflow-hidden">
+<div class="h-full bg-blue-500 rounded-full w-[18%]"></div>
+</div>
+</div>
+<div class="group">
+<div class="flex justify-between text-xs mb-1.5">
+<span class="font-medium text-text-secondary">Damaged</span>
+<span class="font-bold text-text-main">$15.00</span>
+</div>
+<div class="h-2.5 w-full bg-gray-100 rounded-full overflow-hidden">
+<div class="h-full bg-yellow-500 rounded-full w-[8%]"></div>
+</div>
+</div>
+<div class="group">
+<div class="flex justify-between text-xs mb-1.5">
+<span class="font-medium text-text-secondary">Other</span>
+<span class="font-bold text-text-main">$15.70</span>
+</div>
+<div class="h-2.5 w-full bg-gray-100 rounded-full overflow-hidden">
+<div class="h-full bg-gray-400 rounded-full w-[4%]"></div>
+</div>
+</div>
+</div>
+<div class="mt-8 pt-6 border-t border-border-color">
+<h3 class="font-bold text-text-main mb-4">Top Wasted Items (Qty)</h3>
+<ul class="space-y-3">
+<li class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="h-8 w-8 rounded-full bg-gray-100 flex items-center justify-center text-xs font-bold text-text-secondary">1</div>
+<span class="text-sm font-medium text-text-main">Burger Buns</span>
+</div>
+<span class="text-sm font-bold text-red-500">24 pcs</span>
+</li>
+<li class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="h-8 w-8 rounded-full bg-gray-100 flex items-center justify-center text-xs font-bold text-text-secondary">2</div>
+<span class="text-sm font-medium text-text-main">Tomatoes</span>
+</div>
+<span class="text-sm font-bold text-red-500">5.2 kg</span>
+</li>
+<li class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="h-8 w-8 rounded-full bg-gray-100 flex items-center justify-center text-xs font-bold text-text-secondary">3</div>
+<span class="text-sm font-medium text-text-main">Milk</span>
+</div>
+<span class="text-sm font-bold text-red-500">4.0 L</span>
+</li>
+</ul>
+</div>
+</div>
+</aside>
+</div>
+</section>
+</main>
+
+</body></html>

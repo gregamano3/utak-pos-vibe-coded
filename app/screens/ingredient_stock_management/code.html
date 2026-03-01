@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Ingredient &amp; Stock Management (Light Mode)</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#13ec80",
+                        "primary-hover": "#0fb863",
+                        "primary-content": "#0a1a12",
+                        "background-light": "#f8fafc","surface-light": "#ffffff",
+                        "text-main": "#0f172a","text-secondary": "#334155","text-muted": "#64748b","border-light": "#e2e8f0",},
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"],
+                        "body": ["Inter", "sans-serif"],
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8; 
+        }
+    </style>
+</head>
+<body class="bg-background-light text-text-main h-screen overflow-hidden flex">
+<aside class="w-64 flex-shrink-0 border-r border-border-light bg-surface-light flex flex-col h-full transition-all duration-300 shadow-[4px_0_24px_-12px_rgba(0,0,0,0.05)] z-20">
+<div class="h-16 flex items-center gap-3 px-6 border-b border-border-light">
+<div class="h-8 w-8 rounded-full bg-primary flex items-center justify-center text-primary-content font-bold shadow-sm" data-alt="Logo abstract shape">
+<span class="material-symbols-outlined text-xl">lunch_dining</span>
+</div>
+<div class="flex flex-col">
+<h1 class="text-base font-bold leading-none text-slate-900">Bistro POS</h1>
+<p class="text-xs text-text-muted mt-1">Admin Panel</p>
+</div>
+</div>
+<nav class="flex-1 overflow-y-auto py-4 px-3 flex flex-col gap-1">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary-hover">dashboard</span>
+<span class="text-sm font-medium">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-primary/10 text-emerald-800 transition-colors" href="#">
+<span class="material-symbols-outlined fill-1 text-emerald-600">inventory_2</span>
+<span class="text-sm font-bold">Inventory</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary-hover">shopping_cart</span>
+<span class="text-sm font-medium">Orders</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary-hover">restaurant_menu</span>
+<span class="text-sm font-medium">Menu</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary-hover">local_shipping</span>
+<span class="text-sm font-medium">Suppliers</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary-hover">bar_chart</span>
+<span class="text-sm font-medium">Reports</span>
+</a>
+</nav>
+<div class="p-4 border-t border-border-light bg-slate-50/50">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 hover:bg-white hover:shadow-sm transition-all group mb-2" href="#">
+<span class="material-symbols-outlined group-hover:text-primary-hover">settings</span>
+<span class="text-sm font-medium">Settings</span>
+</a>
+<div class="flex items-center gap-3 px-3 py-2">
+<div class="h-10 w-10 rounded-full bg-cover bg-center ring-2 ring-white shadow-sm" data-alt="User profile picture" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuC9LQeY4N50vZQWfe6n899GVZcxcixGWSP0CsFMNWxzBsP_268xyGzOt7FiNY3EyPtoumHiYn4Cb7X2BhKbETRQDt8SgwXTYZKKhWErt_m-uljEOGtdvK_6GjDF3XjNhBbjpfVxJdf6ij7yqxzjzjlyZocr9wcwOcNoQNPFptud_18DGDOuC7YVn63UxfuikBkLcXm5UnqtZBl5AuDX9CQ8bWChKDmxjyZUfYW7Xs7YuULJrewS4b6gcrBBQSiKrzKzJo6JqLqzC2_V')"></div>
+<div class="flex flex-col">
+<p class="text-sm font-bold text-slate-900">Alex Morgan</p>
+<p class="text-xs text-text-muted">Head Chef</p>
+</div>
+</div>
+</div>
+</aside>
+<main class="flex-1 flex flex-col min-w-0 overflow-hidden bg-background-light">
+<header class="h-16 flex items-center justify-between px-6 border-b border-border-light bg-surface-light sticky top-0 z-10">
+<div class="flex items-center gap-4">
+<h2 class="text-lg font-bold text-slate-800 hidden md:block">Stock Management</h2>
+</div>
+<div class="flex items-center gap-3">
+<button class="relative p-2 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-full transition-all">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
+</button>
+<button class="flex items-center justify-center h-9 px-4 rounded-lg bg-primary hover:bg-primary-hover text-primary-content text-sm font-bold transition-all shadow-lg shadow-emerald-200 hover:shadow-emerald-300 translate-y-0 hover:-translate-y-0.5">
+<span class="material-symbols-outlined text-lg mr-2">add</span>
+                    New Item
+                </button>
+</div>
+</header>
+<div class="flex-1 overflow-y-auto p-4 md:p-8">
+<div class="max-w-[1400px] mx-auto space-y-6">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div>
+<h1 class="text-3xl font-black tracking-tight text-slate-900 mb-2">Ingredient Stock</h1>
+<p class="text-slate-500 max-w-2xl font-medium">Manage your daily inventory, track stock levels in real-time, and log wastage efficiently.</p>
+</div>
+<div class="flex gap-3">
+<button class="flex items-center justify-center h-10 px-4 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 text-slate-700 text-sm font-semibold transition-all shadow-sm">
+<span class="material-symbols-outlined text-lg mr-2 text-red-500">delete_outline</span>
+                            Log Wastage
+                        </button>
+<button class="flex items-center justify-center h-10 px-4 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 text-slate-700 text-sm font-semibold transition-all shadow-sm">
+<span class="material-symbols-outlined text-lg mr-2 text-slate-500">download</span>
+                            Export
+                        </button>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-12 gap-4">
+<div class="md:col-span-5 lg:col-span-4">
+<div class="relative group">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-slate-400">search</span>
+</div>
+<input class="block w-full pl-10 pr-3 py-2.5 border border-slate-200 rounded-xl bg-white text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-primary focus:border-transparent shadow-sm transition-all" placeholder="Search by name, ID or barcode..." type="text"/>
+</div>
+</div>
+<div class="md:col-span-7 lg:col-span-8 flex items-center gap-2 overflow-x-auto pb-2 md:pb-0 scrollbar-hide">
+<button class="whitespace-nowrap px-4 py-2 rounded-lg bg-slate-900 text-white text-sm font-bold shadow-md hover:bg-slate-800 transition-colors">
+                            All Items
+                        </button>
+<button class="whitespace-nowrap px-4 py-2 rounded-lg bg-white hover:bg-red-50 text-slate-600 hover:text-red-600 border border-slate-200 hover:border-red-200 text-sm font-semibold transition-all shadow-sm">
+                            Low Stock <span class="ml-1 px-1.5 py-0.5 rounded-full bg-red-100 text-red-600 text-xs font-bold">4</span>
+</button>
+<button class="whitespace-nowrap px-4 py-2 rounded-lg bg-white hover:bg-orange-50 text-slate-600 hover:text-orange-600 border border-slate-200 hover:border-orange-200 text-sm font-semibold transition-all shadow-sm">
+                            Expiring Soon <span class="ml-1 px-1.5 py-0.5 rounded-full bg-orange-100 text-orange-600 text-xs font-bold">2</span>
+</button>
+<button class="whitespace-nowrap px-4 py-2 rounded-lg bg-white hover:bg-slate-50 text-slate-600 border border-slate-200 hover:border-slate-300 text-sm font-semibold transition-all shadow-sm">
+                            Vegetables
+                        </button>
+<button class="whitespace-nowrap px-4 py-2 rounded-lg bg-white hover:bg-slate-50 text-slate-600 border border-slate-200 hover:border-slate-300 text-sm font-semibold transition-all shadow-sm">
+                            Meat &amp; Poultry
+                        </button>
+<button class="whitespace-nowrap px-4 py-2 rounded-lg bg-white hover:bg-slate-50 text-slate-600 border border-slate-200 hover:border-slate-300 text-sm font-semibold transition-all shadow-sm">
+                            Dairy
+                        </button>
+</div>
+</div>
+<div class="rounded-xl border border-slate-200 bg-white overflow-hidden shadow-sm">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-slate-50 border-b border-slate-200">
+<th class="py-4 px-6 text-xs font-bold uppercase tracking-wider text-slate-500">Ingredient Name</th>
+<th class="py-4 px-6 text-xs font-bold uppercase tracking-wider text-slate-500">Category</th>
+<th class="py-4 px-6 text-xs font-bold uppercase tracking-wider text-slate-500 text-right">Current Stock</th>
+<th class="py-4 px-6 text-xs font-bold uppercase tracking-wider text-slate-500 text-center">Unit</th>
+<th class="py-4 px-6 text-xs font-bold uppercase tracking-wider text-slate-500">Status</th>
+<th class="py-4 px-6 text-xs font-bold uppercase tracking-wider text-slate-500">Expiry Date</th>
+<th class="py-4 px-6 text-xs font-bold uppercase tracking-wider text-slate-500 text-right">Action</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-100">
+<tr class="group hover:bg-slate-50 transition-colors bg-white">
+<td class="py-4 px-6">
+<div class="flex items-center gap-3">
+<div class="h-10 w-10 rounded-lg bg-slate-100 flex items-center justify-center text-xl shadow-sm border border-slate-200">🍅</div>
+<div>
+<p class="text-sm font-bold text-slate-900">Tomatoes Roma</p>
+<p class="text-xs text-slate-500 font-medium">ID: #8922</p>
+</div>
+</div>
+</td>
+<td class="py-4 px-6">
+<span class="inline-flex items-center rounded-md bg-green-50 px-2.5 py-1 text-xs font-semibold text-green-700 ring-1 ring-inset ring-green-600/20">Produce</span>
+</td>
+<td class="py-4 px-6 text-right">
+<span class="text-sm font-bold text-slate-800">45.0</span>
+</td>
+<td class="py-4 px-6 text-center">
+<span class="text-sm text-slate-500 font-medium">kg</span>
+</td>
+<td class="py-4 px-6">
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200">
+<span class="h-1.5 w-1.5 rounded-full bg-emerald-600"></span>
+<span class="text-xs font-bold uppercase tracking-wide">Normal</span>
+</div>
+</td>
+<td class="py-4 px-6">
+<span class="text-sm text-slate-600 font-medium">Oct 25, 2023</span>
+</td>
+<td class="py-4 px-6 text-right">
+<button class="text-emerald-600 hover:text-emerald-700 font-bold text-sm transition-colors hover:underline">Adjust</button>
+</td>
+</tr>
+<tr class="group hover:bg-slate-100 transition-colors bg-slate-50/50">
+<td class="py-4 px-6">
+<div class="flex items-center gap-3">
+<div class="h-10 w-10 rounded-lg bg-white flex items-center justify-center text-xl shadow-sm border border-slate-200">🧀</div>
+<div>
+<p class="text-sm font-bold text-slate-900">Mozzarella Cheese</p>
+<p class="text-xs text-slate-500 font-medium">ID: #4421</p>
+</div>
+</div>
+</td>
+<td class="py-4 px-6">
+<span class="inline-flex items-center rounded-md bg-yellow-50 px-2.5 py-1 text-xs font-semibold text-yellow-700 ring-1 ring-inset ring-yellow-600/20">Dairy</span>
+</td>
+<td class="py-4 px-6 text-right">
+<span class="text-sm font-bold text-orange-600">12.0</span>
+</td>
+<td class="py-4 px-6 text-center">
+<span class="text-sm text-slate-500 font-medium">kg</span>
+</td>
+<td class="py-4 px-6">
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-orange-100 text-orange-800 border border-orange-200">
+<span class="h-1.5 w-1.5 rounded-full bg-orange-500"></span>
+<span class="text-xs font-bold uppercase tracking-wide">Low Stock</span>
+</div>
+</td>
+<td class="py-4 px-6">
+<span class="text-sm text-slate-600 font-medium">Nov 01, 2023</span>
+</td>
+<td class="py-4 px-6 text-right">
+<button class="text-emerald-600 hover:text-emerald-700 font-bold text-sm transition-colors hover:underline">Adjust</button>
+</td>
+</tr>
+<tr class="group hover:bg-slate-50 transition-colors bg-white">
+<td class="py-4 px-6">
+<div class="flex items-center gap-3">
+<div class="h-10 w-10 rounded-lg bg-slate-100 flex items-center justify-center text-xl shadow-sm border border-slate-200">🌿</div>
+<div>
+<p class="text-sm font-bold text-slate-900">Basil Leaves</p>
+<p class="text-xs text-slate-500 font-medium">ID: #1102</p>
+</div>
+</div>
+</td>
+<td class="py-4 px-6">
+<span class="inline-flex items-center rounded-md bg-green-50 px-2.5 py-1 text-xs font-semibold text-green-700 ring-1 ring-inset ring-green-600/20">Herbs</span>
+</td>
+<td class="py-4 px-6 text-right">
+<span class="text-sm font-bold text-red-600">0.5</span>
+</td>
+<td class="py-4 px-6 text-center">
+<span class="text-sm text-slate-500 font-medium">kg</span>
+</td>
+<td class="py-4 px-6">
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-red-100 text-red-800 border border-red-200">
+<span class="h-1.5 w-1.5 rounded-full bg-red-600 animate-pulse"></span>
+<span class="text-xs font-bold uppercase tracking-wide">Critical</span>
+</div>
+</td>
+<td class="py-4 px-6">
+<span class="text-sm font-bold text-red-500">Oct 22, 2023</span>
+</td>
+<td class="py-4 px-6 text-right">
+<button class="text-emerald-600 hover:text-emerald-700 font-bold text-sm transition-colors hover:underline">Adjust</button>
+</td>
+</tr>
+<tr class="group hover:bg-slate-100 transition-colors bg-slate-50/50">
+<td class="py-4 px-6">
+<div class="flex items-center gap-3">
+<div class="h-10 w-10 rounded-lg bg-white flex items-center justify-center text-xl shadow-sm border border-slate-200">🫒</div>
+<div>
+<p class="text-sm font-bold text-slate-900">Olive Oil EV</p>
+<p class="text-xs text-slate-500 font-medium">ID: #3320</p>
+</div>
+</div>
+</td>
+<td class="py-4 px-6">
+<span class="inline-flex items-center rounded-md bg-purple-50 px-2.5 py-1 text-xs font-semibold text-purple-700 ring-1 ring-inset ring-purple-600/20">Pantry</span>
+</td>
+<td class="py-4 px-6 text-right">
+<span class="text-sm font-bold text-slate-800">20.0</span>
+</td>
+<td class="py-4 px-6 text-center">
+<span class="text-sm text-slate-500 font-medium">L</span>
+</td>
+<td class="py-4 px-6">
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200">
+<span class="h-1.5 w-1.5 rounded-full bg-emerald-600"></span>
+<span class="text-xs font-bold uppercase tracking-wide">Normal</span>
+</div>
+</td>
+<td class="py-4 px-6">
+<span class="text-sm text-slate-600 font-medium">May 15, 2024</span>
+</td>
+<td class="py-4 px-6 text-right">
+<button class="text-emerald-600 hover:text-emerald-700 font-bold text-sm transition-colors hover:underline">Adjust</button>
+</td>
+</tr>
+<tr class="group hover:bg-slate-50 transition-colors bg-white">
+<td class="py-4 px-6">
+<div class="flex items-center gap-3">
+<div class="h-10 w-10 rounded-lg bg-slate-100 flex items-center justify-center text-xl shadow-sm border border-slate-200">🍗</div>
+<div>
+<p class="text-sm font-bold text-slate-900">Chicken Breast</p>
+<p class="text-xs text-slate-500 font-medium">ID: #5512</p>
+</div>
+</div>
+</td>
+<td class="py-4 px-6">
+<span class="inline-flex items-center rounded-md bg-red-50 px-2.5 py-1 text-xs font-semibold text-red-700 ring-1 ring-inset ring-red-600/20">Meat</span>
+</td>
+<td class="py-4 px-6 text-right">
+<span class="text-sm font-bold text-slate-800">85.0</span>
+</td>
+<td class="py-4 px-6 text-center">
+<span class="text-sm text-slate-500 font-medium">kg</span>
+</td>
+<td class="py-4 px-6">
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200">
+<span class="h-1.5 w-1.5 rounded-full bg-emerald-600"></span>
+<span class="text-xs font-bold uppercase tracking-wide">Normal</span>
+</div>
+</td>
+<td class="py-4 px-6">
+<span class="text-sm text-slate-600 font-medium">Oct 24, 2023</span>
+</td>
+<td class="py-4 px-6 text-right">
+<button class="text-emerald-600 hover:text-emerald-700 font-bold text-sm transition-colors hover:underline">Adjust</button>
+</td>
+</tr>
+<tr class="group hover:bg-slate-100 transition-colors bg-slate-50/50">
+<td class="py-4 px-6">
+<div class="flex items-center gap-3">
+<div class="h-10 w-10 rounded-lg bg-white flex items-center justify-center text-xl shadow-sm border border-slate-200">🥛</div>
+<div>
+<p class="text-sm font-bold text-slate-900">Heavy Cream</p>
+<p class="text-xs text-slate-500 font-medium">ID: #4430</p>
+</div>
+</div>
+</td>
+<td class="py-4 px-6">
+<span class="inline-flex items-center rounded-md bg-yellow-50 px-2.5 py-1 text-xs font-semibold text-yellow-700 ring-1 ring-inset ring-yellow-600/20">Dairy</span>
+</td>
+<td class="py-4 px-6 text-right">
+<span class="text-sm font-bold text-slate-800">8.5</span>
+</td>
+<td class="py-4 px-6 text-center">
+<span class="text-sm text-slate-500 font-medium">L</span>
+</td>
+<td class="py-4 px-6">
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200">
+<span class="h-1.5 w-1.5 rounded-full bg-emerald-600"></span>
+<span class="text-xs font-bold uppercase tracking-wide">Normal</span>
+</div>
+</td>
+<td class="py-4 px-6">
+<span class="text-sm text-slate-600 font-medium">Nov 10, 2023</span>
+</td>
+<td class="py-4 px-6 text-right">
+<button class="text-emerald-600 hover:text-emerald-700 font-bold text-sm transition-colors hover:underline">Adjust</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="flex items-center justify-between px-6 py-4 border-t border-slate-200 bg-white">
+<span class="text-sm text-slate-500 font-medium">Showing <span class="font-bold text-slate-900">1-6</span> of <span class="font-bold text-slate-900">124</span> results</span>
+<div class="flex items-center gap-2">
+<button class="p-2 rounded-lg hover:bg-slate-100 text-slate-600 transition-colors border border-slate-200 disabled:opacity-50 disabled:cursor-not-allowed" disabled="">
+<span class="material-symbols-outlined text-lg">chevron_left</span>
+</button>
+<button class="p-2 rounded-lg hover:bg-slate-100 text-slate-600 transition-colors border border-slate-200">
+<span class="material-symbols-outlined text-lg">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+
+</body></html>

@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Advanced Business Reports (Light Mode) - RestoPOS</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#10b981", // Emerald 500 - slightly darker for light mode readability
+                        "primary-dark": "#059669",
+                        "primary-light": "#d1fae5",
+                        "background-light": "#f3f4f6", // Gray 100
+                        "background-dark": "#ffffff", // White for cards in light mode
+                        "card-light": "#ffffff",
+                        "border-light": "#e5e7eb", // Gray 200
+                        "text-main": "#111827", // Gray 900
+                        "text-secondary": "#4b5563", // Gray 600
+                        "text-muted": "#6b7280", // Gray 500
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #d1d5db; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #9ca3af; 
+        }
+    </style>
+</head>
+<body class="bg-background-light text-text-main antialiased min-h-screen flex flex-col overflow-x-hidden">
+<header class="sticky top-0 z-50 flex items-center justify-between whitespace-nowrap border-b border-solid border-b-border-light bg-white px-10 py-3 shadow-sm">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-4 text-text-main">
+<div class="size-8 text-primary">
+<svg class="w-full h-full" fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path d="M13.8261 30.5736C16.7203 29.8826 20.2244 29.4783 24 29.4783C27.7756 29.4783 31.2797 29.8826 34.1739 30.5736C36.9144 31.2278 39.9967 32.7669 41.3563 33.8352L24.8486 7.36089C24.4571 6.73303 23.5429 6.73303 23.1514 7.36089L6.64374 33.8352C8.00331 32.7669 11.0856 31.2278 13.8261 30.5736Z" fill="currentColor"></path>
+<path clip-rule="evenodd" d="M39.998 35.764C39.9944 35.7463 39.9875 35.7155 39.9748 35.6706C39.9436 35.5601 39.8949 35.4259 39.8346 35.2825C39.8168 35.2403 39.7989 35.1993 39.7813 35.1602C38.5103 34.2887 35.9788 33.0607 33.7095 32.5189C30.9875 31.8691 27.6413 31.4783 24 31.4783C20.3587 31.4783 17.0125 31.8691 14.2905 32.5189C12.0012 33.0654 9.44505 34.3104 8.18538 35.1832C8.17384 35.2075 8.16216 35.233 8.15052 35.2592C8.09919 35.3751 8.05721 35.4886 8.02977 35.589C8.00356 35.6848 8.00039 35.7333 8.00004 35.7388C8.00004 35.739 8 35.7393 8.00004 35.7388C8.00004 35.7641 8.0104 36.0767 8.68485 36.6314C9.34546 37.1746 10.4222 37.7531 11.9291 38.2772C14.9242 39.319 19.1919 40 24 40C28.8081 40 33.0758 39.319 36.0709 38.2772C37.5778 37.7531 38.6545 37.1746 39.3151 36.6314C39.9006 36.1499 39.9857 35.8511 39.998 35.764ZM4.95178 32.7688L21.4543 6.30267C22.6288 4.4191 25.3712 4.41909 26.5457 6.30267L43.0534 32.777C43.0709 32.8052 43.0878 32.8338 43.104 32.8629L41.3563 33.8352C43.104 32.8629 43.1038 32.8626 43.104 32.8629L43.1051 32.865L43.1065 32.8675L43.1101 32.8739L43.1199 32.8918C43.1276 32.906 43.1377 32.9246 43.1497 32.9473C43.1738 32.9925 43.2062 33.0545 43.244 33.1299C43.319 33.2792 43.4196 33.489 43.5217 33.7317C43.6901 34.1321 44 34.9311 44 35.7391C44 37.4427 43.003 38.7775 41.8558 39.7209C40.6947 40.6757 39.1354 41.4464 37.385 42.0552C33.8654 43.2794 29.133 44 24 44C18.867 44 14.1346 43.2794 10.615 42.0552C8.86463 41.4464 7.30529 40.6757 6.14419 39.7209C4.99695 38.7775 3.99999 37.4427 3.99999 35.7391C3.99999 34.8725 4.29264 34.0922 4.49321 33.6393C4.60375 33.3898 4.71348 33.1804 4.79687 33.0311C4.83898 32.9556 4.87547 32.8935 4.9035 32.8471C4.91754 32.8238 4.92954 32.8043 4.93916 32.7889L4.94662 32.777L4.95178 32.7688ZM35.9868 29.004L24 9.77997L12.0131 29.004C12.4661 28.8609 12.9179 28.7342 13.3617 28.6282C16.4281 27.8961 20.0901 27.4783 24 27.4783C27.9099 27.4783 31.5719 27.8961 34.6383 28.6282C35.082 28.7342 35.5339 28.8609 35.9868 29.004Z" fill="currentColor" fill-rule="evenodd"></path>
+</svg>
+</div>
+<h2 class="text-text-main text-lg font-bold leading-tight tracking-[-0.015em]">RestoPOS</h2>
+</div>
+<nav class="flex items-center gap-9 hidden md:flex">
+<a class="text-text-secondary hover:text-primary transition-colors text-sm font-medium leading-normal" href="#">Dashboard</a>
+<a class="text-text-secondary hover:text-primary transition-colors text-sm font-medium leading-normal" href="#">Inventory</a>
+<a class="text-text-secondary hover:text-primary transition-colors text-sm font-medium leading-normal" href="#">Orders</a>
+<a class="text-text-main text-sm font-medium leading-normal border-b-2 border-primary pb-0.5" href="#">Reports</a>
+<a class="text-text-secondary hover:text-primary transition-colors text-sm font-medium leading-normal" href="#">Settings</a>
+</nav>
+</div>
+<div class="flex flex-1 justify-end gap-6 items-center">
+<label class="hidden md:flex flex-col min-w-40 !h-10 max-w-64">
+<div class="flex w-full flex-1 items-stretch rounded-lg h-full group">
+<div class="text-text-muted flex border border-border-light bg-background-light items-center justify-center pl-3 rounded-l-lg border-r-0 group-focus-within:border-primary group-focus-within:text-primary transition-colors">
+<span class="material-symbols-outlined text-[20px]">search</span>
+</div>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-text-main focus:outline-0 focus:ring-0 border border-border-light bg-background-light focus:border-primary h-full placeholder:text-text-muted px-3 rounded-l-none border-l-0 pl-1 text-sm font-normal leading-normal transition-colors" placeholder="Search reports..." value=""/>
+</div>
+</label>
+<div class="flex items-center gap-4">
+<button class="flex items-center justify-center rounded-full size-10 bg-background-light text-text-muted hover:text-text-main hover:bg-border-light transition-all relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 size-2 bg-red-500 rounded-full"></span>
+</button>
+<div class="bg-center bg-no-repeat bg-cover rounded-full size-10 border-2 border-primary cursor-pointer shadow-sm" data-alt="User profile picture of a man" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBZiinyyKfkruC5hF4J596fx4kMpFA7pS3LNe00jyCQPSioABVIAVpVVJCFfRBFzP-Q4N8846KZPZTHdIWTsgXd834NBSjM_qQW_L2GPAWp3EfHjUROdko1m5k8F1j9rpmXPcLL2Uw4QzoVvO481f70aNPDYxQ0HeQnosSsdg9bL37W80mIWDaRM8c4dnckoosRNWS4XbpB1QjVAxR7nXURUEvJLx3lrLIjzDFy60Fi5QBNOSXB3x_aNasgacOFLVUq2c9ylUEbl3gp");'></div>
+</div>
+</div>
+</header>
+<main class="flex-1 flex flex-col items-center w-full px-6 py-8 md:px-10 lg:px-20 bg-background-light">
+<div class="w-full max-w-7xl flex flex-col gap-8">
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+<div>
+<h1 class="text-text-main text-3xl md:text-4xl font-black leading-tight tracking-[-0.033em]">Business Intelligence</h1>
+<p class="text-text-secondary mt-2 text-base font-normal">Advanced analytics and reporting for strategic decision making.</p>
+</div>
+<div class="flex gap-3">
+<button class="flex items-center gap-2 h-10 px-4 bg-white hover:bg-gray-50 border border-border-light text-text-main rounded-lg transition-colors text-sm font-medium shadow-sm">
+<span class="material-symbols-outlined text-[20px]">calendar_today</span>
+<span>This Month</span>
+</button>
+<button class="flex items-center gap-2 h-10 px-4 bg-primary hover:bg-primary-dark text-white rounded-lg transition-colors text-sm font-bold shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-[20px]">add</span>
+<span>New Report</span>
+</button>
+</div>
+</div>
+<div class="w-full bg-white border border-border-light rounded-xl p-6 shadow-sm">
+<div class="flex flex-col gap-6">
+<div class="flex items-center justify-between">
+<h3 class="text-text-main text-lg font-bold flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">tune</span>
+                            Generate Custom Report
+                        </h3>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+<div class="flex flex-col gap-2">
+<label class="text-text-secondary text-xs font-bold uppercase tracking-wider">Report Type</label>
+<div class="relative">
+<select class="w-full bg-background-light border border-border-light text-text-main text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5 appearance-none">
+<option>Profit &amp; Loss Analysis</option>
+<option>Wastage Report</option>
+<option>Tax Summary</option>
+<option>Sales by Server</option>
+</select>
+<div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none text-text-muted">
+<span class="material-symbols-outlined">expand_more</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-text-secondary text-xs font-bold uppercase tracking-wider">Date Range</label>
+<div class="flex gap-2 items-center">
+<div class="relative w-full">
+<input class="w-full bg-background-light border border-border-light text-text-main text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5 [color-scheme:light]" type="date" value="2023-10-01"/>
+</div>
+<span class="text-text-muted">-</span>
+<div class="relative w-full">
+<input class="w-full bg-background-light border border-border-light text-text-main text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5 [color-scheme:light]" type="date" value="2023-10-31"/>
+</div>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-text-secondary text-xs font-bold uppercase tracking-wider">Branch Location</label>
+<div class="relative">
+<select class="w-full bg-background-light border border-border-light text-text-main text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5 appearance-none">
+<option>All Locations</option>
+<option>Main Street HQ</option>
+<option>Westside Mall</option>
+<option>Airport Terminal</option>
+</select>
+<div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none text-text-muted">
+<span class="material-symbols-outlined">expand_more</span>
+</div>
+</div>
+</div>
+<div class="flex items-end gap-2">
+<button class="flex-1 h-[42px] bg-white border border-border-light hover:border-primary hover:bg-gray-50 text-text-main rounded-lg flex items-center justify-center gap-2 transition-all group">
+<span class="material-symbols-outlined text-red-500 group-hover:text-red-600">picture_as_pdf</span>
+<span class="text-sm font-medium">PDF</span>
+</button>
+<button class="flex-1 h-[42px] bg-white border border-border-light hover:border-primary hover:bg-gray-50 text-text-main rounded-lg flex items-center justify-center gap-2 transition-all group">
+<span class="material-symbols-outlined text-green-600 group-hover:text-green-700">table_view</span>
+<span class="text-sm font-medium">Excel</span>
+</button>
+<button class="flex-1 h-[42px] bg-primary hover:bg-primary-dark text-white rounded-lg flex items-center justify-center gap-2 transition-all font-bold shadow-sm">
+<span class="text-sm">Generate</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+<div class="bg-white border border-border-light rounded-xl p-6 flex flex-col h-full shadow-sm">
+<div class="flex justify-between items-start mb-6">
+<div>
+<h3 class="text-text-main text-lg font-bold">Sales by Category</h3>
+<p class="text-text-secondary text-sm mt-1">Revenue distribution across menu types</p>
+</div>
+<div class="flex items-center gap-1 text-primary-dark bg-primary-light px-2 py-1 rounded text-xs font-bold">
+<span class="material-symbols-outlined text-[16px]">trending_up</span>
+<span>+12.5%</span>
+</div>
+</div>
+<div class="flex flex-col sm:flex-row items-center gap-8 flex-1">
+<div class="relative size-48 rounded-full border-[12px] border-background-light shadow-lg" style="background: conic-gradient(#10b981 0% 45%, #6366f1 45% 65%, #f59e0b 65% 85%, #ec4899 85% 100%);">
+<div class="absolute inset-0 m-auto size-32 bg-white rounded-full flex flex-col items-center justify-center shadow-inner">
+<span class="text-text-secondary text-xs uppercase tracking-wider font-medium">Total</span>
+<span class="text-text-main text-2xl font-bold">$42.5k</span>
+</div>
+</div>
+<div class="flex flex-col gap-4 flex-1 w-full">
+<div class="flex items-center justify-between group cursor-pointer">
+<div class="flex items-center gap-3">
+<div class="size-3 rounded-full bg-[#10b981]"></div>
+<span class="text-text-secondary text-sm font-medium group-hover:text-primary transition-colors">Main Course</span>
+</div>
+<span class="text-text-main font-bold">45%</span>
+</div>
+<div class="flex items-center justify-between group cursor-pointer">
+<div class="flex items-center gap-3">
+<div class="size-3 rounded-full bg-[#6366f1]"></div>
+<span class="text-text-secondary text-sm font-medium group-hover:text-primary transition-colors">Beverages</span>
+</div>
+<span class="text-text-main font-bold">20%</span>
+</div>
+<div class="flex items-center justify-between group cursor-pointer">
+<div class="flex items-center gap-3">
+<div class="size-3 rounded-full bg-[#f59e0b]"></div>
+<span class="text-text-secondary text-sm font-medium group-hover:text-primary transition-colors">Appetizers</span>
+</div>
+<span class="text-text-main font-bold">20%</span>
+</div>
+<div class="flex items-center justify-between group cursor-pointer">
+<div class="flex items-center gap-3">
+<div class="size-3 rounded-full bg-[#ec4899]"></div>
+<span class="text-text-secondary text-sm font-medium group-hover:text-primary transition-colors">Desserts</span>
+</div>
+<span class="text-text-main font-bold">15%</span>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-white border border-border-light rounded-xl p-6 flex flex-col h-full shadow-sm">
+<div class="flex justify-between items-start mb-2">
+<div>
+<h3 class="text-text-main text-lg font-bold">Stock Movement</h3>
+<p class="text-text-secondary text-sm mt-1">Daily inventory turnover rate</p>
+</div>
+<select class="bg-background-light border-none text-text-secondary text-xs rounded p-1 focus:ring-0 cursor-pointer hover:text-text-main font-medium">
+<option>Last 30 Days</option>
+<option>Last 7 Days</option>
+</select>
+</div>
+<div class="flex-1 flex flex-col justify-end min-h-[200px] mt-4 relative">
+<div class="absolute inset-0 flex flex-col justify-between text-xs text-text-muted/30 font-mono pointer-events-none">
+<div class="border-b border-dashed border-border-light w-full h-0"></div>
+<div class="border-b border-dashed border-border-light w-full h-0"></div>
+<div class="border-b border-dashed border-border-light w-full h-0"></div>
+<div class="border-b border-dashed border-border-light w-full h-0"></div>
+</div>
+<svg class="w-full h-full z-10" preserveAspectRatio="none" viewBox="0 0 400 150">
+<defs>
+<linearGradient id="gradient-stock" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#10b981" stop-opacity="0.3"></stop>
+<stop offset="100%" stop-color="#10b981" stop-opacity="0"></stop>
+</linearGradient>
+</defs>
+<path d="M0,150 L0,100 C20,90 40,110 60,80 C80,50 100,60 120,40 C140,20 160,50 180,60 C200,70 220,40 240,50 C260,60 280,30 300,40 C320,50 340,20 360,30 C380,40 400,10 400,150 Z" fill="url(#gradient-stock)"></path>
+<path d="M0,100 C20,90 40,110 60,80 C80,50 100,60 120,40 C140,20 160,50 180,60 C200,70 220,40 240,50 C260,60 280,30 300,40 C320,50 340,20 360,30 C380,40 400,10 400,10" fill="none" stroke="#10b981" stroke-linecap="round" stroke-width="3"></path>
+<circle cx="120" cy="40" fill="#ffffff" r="4" stroke="#10b981" stroke-width="2"></circle>
+<circle cx="240" cy="50" fill="#ffffff" r="4" stroke="#10b981" stroke-width="2"></circle>
+<circle cx="360" cy="30" fill="#ffffff" r="4" stroke="#10b981" stroke-width="2"></circle>
+</svg>
+<div class="flex justify-between text-xs text-text-muted font-medium pt-2 px-1">
+<span>Mon</span>
+<span>Tue</span>
+<span>Wed</span>
+<span>Thu</span>
+<span>Fri</span>
+<span>Sat</span>
+<span>Sun</span>
+</div>
+</div>
+</div>
+</div>
+<div class="w-full pb-8">
+<div class="flex justify-between items-end px-1 pb-4">
+<h2 class="text-text-main text-2xl font-bold leading-tight tracking-[-0.015em]">Staff Performance Leaderboard</h2>
+<a class="text-primary text-sm font-bold hover:underline flex items-center gap-1" href="#">
+                        View Full Report 
+                        <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</a>
+</div>
+<div class="overflow-hidden rounded-xl border border-border-light bg-white shadow-sm">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-gray-50 border-b border-border-light">
+<th class="px-6 py-4 text-text-secondary text-xs font-bold uppercase tracking-wider w-16">Rank</th>
+<th class="px-6 py-4 text-text-secondary text-xs font-bold uppercase tracking-wider">Staff Member</th>
+<th class="px-6 py-4 text-text-secondary text-xs font-bold uppercase tracking-wider text-right">Total Sales</th>
+<th class="px-6 py-4 text-text-secondary text-xs font-bold uppercase tracking-wider text-center">Orders</th>
+<th class="px-6 py-4 text-text-secondary text-xs font-bold uppercase tracking-wider text-right">Avg Tip</th>
+<th class="px-6 py-4 text-text-secondary text-xs font-bold uppercase tracking-wider text-center">Efficiency</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-border-light">
+<tr class="hover:bg-gray-50 transition-colors group">
+<td class="px-6 py-4">
+<div class="size-8 rounded-full bg-yellow-100 text-yellow-700 border border-yellow-200 flex items-center justify-center font-bold">1</div>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="size-10 rounded-full bg-cover bg-center border border-border-light shadow-sm" data-alt="Portrait of Sarah Jenkins" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCTzRA_eugzJB53hkAeKBAlIOT2moqL5Of0SHCcmJZ82HhiNvMi1W98vqanLMyEGr4pdg-WxFWlH-tQeqLWD4tN7suV67REhGpqA0uwnwAKGJ0r0V0-78i2n81xL40kJj3sC_0dAc1PIYZqohjBfqwfsnKXYctACbxUBbreL50AH8zmfEipP42zKW5pDx-lG4UDmnTT6IGHHhUQW9aDSGssg9gaCyEeobL8cHK2joNRkZXmJVxERALA3fTReRakp5IuADpTDg40TooO');"></div>
+<div>
+<p class="text-text-main font-medium text-sm group-hover:text-primary transition-colors">Sarah Jenkins</p>
+<p class="text-text-secondary text-xs">Senior Server</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 text-right text-text-main font-bold text-sm">$5,240.50</td>
+<td class="px-6 py-4 text-center">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-text-secondary border border-gray-200">
+                                            145
+                                        </span>
+</td>
+<td class="px-6 py-4 text-right text-green-600 font-medium text-sm">$124.00</td>
+<td class="px-6 py-4">
+<div class="w-full bg-gray-200 rounded-full h-1.5 max-w-[100px] mx-auto">
+<div class="bg-primary h-1.5 rounded-full" style="width: 98%"></div>
+</div>
+<p class="text-center text-[10px] text-text-muted mt-1">98%</p>
+</td>
+</tr>
+<tr class="hover:bg-gray-50 transition-colors group">
+<td class="px-6 py-4">
+<div class="size-8 rounded-full bg-gray-200 text-gray-600 border border-gray-300 flex items-center justify-center font-bold">2</div>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="size-10 rounded-full bg-cover bg-center border border-border-light shadow-sm" data-alt="Portrait of Mike Ross" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuD5aKdtWH8DydaVMKAVXvkycCwLL1dxJlpVqmVt9TxyiZMkXnEI8w0E92-pRtzl5VXrw31LZg7K_0F50LYkLFA-SBO8toYyY9HsrNOtKxjZ7PXRmNtYcIPa0lyDEOdKZn2mmYM5YbSDREC1hUIuH9b1n6I4k4Nww21BuGXz6-CNejux7u8KnqodpoZp75sX7IHoDMvgC8Mluv2ejuOglO2QcY6aCsewZuIJ7AYxxll1UVZq9wy_5oRx6vZRCF76t7IYzySiKiLyGQf6');"></div>
+<div>
+<p class="text-text-main font-medium text-sm group-hover:text-primary transition-colors">Mike Ross</p>
+<p class="text-text-secondary text-xs">Bartender</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 text-right text-text-main font-bold text-sm">$4,850.25</td>
+<td class="px-6 py-4 text-center">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-text-secondary border border-gray-200">
+                                            132
+                                        </span>
+</td>
+<td class="px-6 py-4 text-right text-green-600 font-medium text-sm">$110.50</td>
+<td class="px-6 py-4">
+<div class="w-full bg-gray-200 rounded-full h-1.5 max-w-[100px] mx-auto">
+<div class="bg-primary h-1.5 rounded-full" style="width: 92%"></div>
+</div>
+<p class="text-center text-[10px] text-text-muted mt-1">92%</p>
+</td>
+</tr>
+<tr class="hover:bg-gray-50 transition-colors group">
+<td class="px-6 py-4">
+<div class="size-8 rounded-full bg-orange-100 text-orange-700 border border-orange-200 flex items-center justify-center font-bold">3</div>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="size-10 rounded-full bg-cover bg-center border border-border-light shadow-sm" data-alt="Portrait of Jessica Pearson" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCvJv3N67FO8rwClVs9JsACAIkjoORnMUbodeahAUFlmzUed4FeteQplXoaF3X-83v5H_mpL30F2CxaOdvcpHrq7UT6Nedu29ZesmIvSzWJYHKtUAQvQTHm5xqOGsXctDqvC_edGT7Z8CVOnic-GKUl6vdxRdMCiTZhX24HRSeEuQm-J0SysIzQbkziVP1Rn1YtvR4YCNtL4vPnrh0VbFWwksdily0dcDWnfFDMLVfBEHPaybkVdH0Awei9RTGY-eOqOaHbg9Vr4CmI');"></div>
+<div>
+<p class="text-text-main font-medium text-sm group-hover:text-primary transition-colors">Jessica Pearson</p>
+<p class="text-text-secondary text-xs">Server</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 text-right text-text-main font-bold text-sm">$4,100.00</td>
+<td class="px-6 py-4 text-center">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-text-secondary border border-gray-200">
+                                            120
+                                        </span>
+</td>
+<td class="px-6 py-4 text-right text-green-600 font-medium text-sm">$95.00</td>
+<td class="px-6 py-4">
+<div class="w-full bg-gray-200 rounded-full h-1.5 max-w-[100px] mx-auto">
+<div class="bg-primary h-1.5 rounded-full" style="width: 88%"></div>
+</div>
+<p class="text-center text-[10px] text-text-muted mt-1">88%</p>
+</td>
+</tr>
+<tr class="hover:bg-gray-50 transition-colors group">
+<td class="px-6 py-4">
+<div class="size-8 rounded-full bg-white text-text-muted border border-border-light flex items-center justify-center font-bold text-sm shadow-sm">4</div>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="size-10 rounded-full bg-cover bg-center border border-border-light shadow-sm" data-alt="Portrait of Louis Litt" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDN5uuZlqlfZ5cHOyVSSy3R01jc6FmaYr-f_6Ww1lR8iIyjI3iJtRoOc5BuP1HyI84fkuzChDX_td0oPn40IKQk0Pe5Mk7uSonKgHSnOdVta4fKiE-47zCyzFx_VjMPeQpXbDHKF-gg26gSTYMOBkZu3rR81h61ehGVcDmsEz5jvTQ6WRt6U_zfsMWV1YOuzi60in4i_y9grykL_eHoFgYCJVM2PpPqsEl8U70O8p0-Y92PZCTubM1J6laaPoljqV9JvMZJfAFj7HAJ');"></div>
+<div>
+<p class="text-text-main font-medium text-sm group-hover:text-primary transition-colors">Louis Litt</p>
+<p class="text-text-secondary text-xs">Trainee</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 text-right text-text-main font-bold text-sm">$3,900.75</td>
+<td class="px-6 py-4 text-center">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-text-secondary border border-gray-200">
+                                            115
+                                        </span>
+</td>
+<td class="px-6 py-4 text-right text-green-600 font-medium text-sm">$80.20</td>
+<td class="px-6 py-4">
+<div class="w-full bg-gray-200 rounded-full h-1.5 max-w-[100px] mx-auto">
+<div class="bg-primary h-1.5 rounded-full" style="width: 85%"></div>
+</div>
+<p class="text-center text-[10px] text-text-muted mt-1">85%</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</main>
+
+</body></html>

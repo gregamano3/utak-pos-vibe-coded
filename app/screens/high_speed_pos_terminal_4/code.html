@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Kitchen Display System (KDS)</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#059669", 
+                        "primary-hover": "#047857",
+                        "primary-light": "#d1fae5",
+                        "background-main": "#f9fafb", 
+                        "surface-white": "#ffffff",
+                        "surface-accent": "#f3f4f6",
+                        "text-main": "#111827", 
+                        "text-secondary": "#4b5563", 
+                        "text-muted": "#9ca3af",
+                        "border-color": "#e5e7eb",
+                        "urgent": "#dc2626",
+                        "warning": "#d97706",
+                        "success": "#059669",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"],
+                        "sans": ["Inter", "sans-serif"],
+                    },
+                    boxShadow: {
+                        "soft": "0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)",
+                        "card": "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)",
+                        "float": "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f3f4f6;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #d1d5db;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #9ca3af;
+        }
+        .animate-pulse-slow {
+            animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+    </style>
+</head>
+<body class="bg-background-main font-display text-text-main overflow-hidden h-screen flex flex-col antialiased">
+<header class="flex h-16 shrink-0 items-center justify-between border-b border-border-color bg-surface-white px-6 shadow-sm z-20">
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-3 text-primary">
+<span class="material-symbols-outlined text-4xl">skillet</span>
+<h1 class="text-2xl font-bold tracking-tight text-text-main">SwiftKDS</h1>
+</div>
+<div class="hidden md:flex gap-4">
+<div class="flex items-center gap-2 px-3 py-1 bg-green-50 text-green-700 rounded-full border border-green-100">
+<span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+<span class="text-xs font-bold uppercase tracking-wide">Online</span>
+</div>
+<div class="text-sm font-medium text-text-secondary flex items-center">
+<span class="material-symbols-outlined mr-1 text-[18px]">schedule</span>
+<span>Avg Ticket Time: <span class="font-bold text-text-main">4m 12s</span></span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-1 rounded-lg bg-surface-accent border border-border-color p-1">
+<button class="flex h-9 items-center gap-2 rounded px-4 text-sm font-bold bg-white text-primary shadow-sm border border-border-color">
+<span class="material-symbols-outlined text-[20px]">grid_view</span>
+<span>Active Orders</span>
+</button>
+<button class="flex h-9 items-center gap-2 rounded px-4 text-sm font-bold text-text-secondary hover:bg-white hover:text-primary transition-colors hover:shadow-sm">
+<span class="material-symbols-outlined text-[20px]">history</span>
+<span>Recall History</span>
+</button>
+</div>
+<div class="h-6 w-px bg-border-color"></div>
+<button class="relative flex h-10 w-10 items-center justify-center rounded-lg bg-surface-white border border-border-color text-text-secondary hover:bg-surface-accent hover:text-primary transition-colors shadow-sm">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<div class="flex items-center gap-3 px-3 py-1.5 rounded-lg bg-surface-accent/50 border border-border-color">
+<span class="material-symbols-outlined text-text-secondary">bed</span>
+<div class="flex flex-col">
+<span class="text-xs font-bold text-text-main leading-none">Kitchen Station 1</span>
+<span class="text-[10px] text-text-secondary leading-none mt-1">Grill &amp; Fryer</span>
+</div>
+</div>
+</div>
+</header>
+<main class="flex-1 overflow-y-auto p-6 bg-background-main relative">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6 pb-20">
+<div class="flex flex-col bg-surface-white rounded-xl shadow-soft border border-border-color overflow-hidden h-full transform transition-all hover:shadow-float">
+<div class="bg-urgent text-white p-3 flex justify-between items-center">
+<div class="flex flex-col">
+<span class="text-xs font-semibold opacity-90">Table 4 • Dine-in</span>
+<h2 class="text-xl font-bold">#1021</h2>
+</div>
+<div class="flex flex-col items-end">
+<span class="text-2xl font-bold font-mono">18:42</span>
+<span class="text-[10px] font-bold uppercase tracking-wider bg-white/20 px-2 py-0.5 rounded">Urgent</span>
+</div>
+</div>
+<div class="flex-1 p-0 overflow-y-auto bg-white">
+<ul class="divide-y divide-border-color">
+<li class="p-4 flex gap-3 hover:bg-red-50/50 transition-colors">
+<input class="w-6 h-6 rounded border-gray-300 text-primary focus:ring-primary mt-1 cursor-pointer" type="checkbox"/>
+<div class="flex-1">
+<div class="flex justify-between items-start">
+<span class="text-lg font-bold text-text-main leading-tight">2x Spicy Wings</span>
+</div>
+<div class="mt-1 flex flex-wrap gap-1">
+<span class="inline-flex items-center rounded-md bg-red-100 px-2 py-1 text-xs font-medium text-red-800 ring-1 ring-inset ring-red-600/20">Extra Hot</span>
+<span class="inline-flex items-center rounded-md bg-gray-100 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">Ranch Dip</span>
+</div>
+</div>
+</li>
+<li class="p-4 flex gap-3 hover:bg-red-50/50 transition-colors">
+<input class="w-6 h-6 rounded border-gray-300 text-primary focus:ring-primary mt-1 cursor-pointer" type="checkbox"/>
+<div class="flex-1">
+<div class="flex justify-between items-start">
+<span class="text-lg font-bold text-text-main leading-tight">1x Caesar Salad</span>
+</div>
+<div class="mt-1 flex flex-wrap gap-1">
+<span class="inline-flex items-center rounded-md bg-yellow-100 px-2 py-1 text-xs font-medium text-yellow-800 ring-1 ring-inset ring-yellow-600/20">No Croutons</span>
+<span class="inline-flex items-center rounded-md bg-gray-100 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">Dressing on Side</span>
+</div>
+</div>
+</li>
+</ul>
+</div>
+<div class="p-3 border-t border-border-color bg-gray-50 flex gap-2">
+<button class="flex-1 bg-surface-white border border-border-color hover:bg-gray-100 text-text-secondary font-bold py-3 rounded-lg text-sm transition-colors">Recall</button>
+<button class="flex-[2] bg-primary hover:bg-primary-hover text-white font-bold py-3 rounded-lg text-lg shadow-sm transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">check</span> Ready
+                    </button>
+</div>
+</div>
+<div class="flex flex-col bg-surface-white rounded-xl shadow-soft border border-border-color overflow-hidden h-full transform transition-all hover:shadow-float">
+<div class="bg-warning text-white p-3 flex justify-between items-center">
+<div class="flex flex-col">
+<span class="text-xs font-semibold opacity-90">Pickup • Online</span>
+<h2 class="text-xl font-bold">#1022</h2>
+</div>
+<div class="flex flex-col items-end">
+<span class="text-2xl font-bold font-mono">08:15</span>
+<span class="text-[10px] font-bold uppercase tracking-wider bg-white/20 px-2 py-0.5 rounded">Delayed</span>
+</div>
+</div>
+<div class="flex-1 p-0 overflow-y-auto bg-white">
+<ul class="divide-y divide-border-color">
+<li class="p-4 flex gap-3 hover:bg-yellow-50/50 transition-colors">
+<input class="w-6 h-6 rounded border-gray-300 text-primary focus:ring-primary mt-1 cursor-pointer" type="checkbox"/>
+<div class="flex-1">
+<div class="flex justify-between items-start">
+<span class="text-lg font-bold text-text-main leading-tight">1x Classic Burger</span>
+</div>
+<div class="mt-1 flex flex-wrap gap-1">
+<span class="inline-flex items-center rounded-md bg-red-100 px-2 py-1 text-xs font-medium text-red-800 ring-1 ring-inset ring-red-600/20">No Onions</span>
+<span class="inline-flex items-center rounded-md bg-gray-100 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">Well Done</span>
+</div>
+</div>
+</li>
+<li class="p-4 flex gap-3 hover:bg-yellow-50/50 transition-colors">
+<input class="w-6 h-6 rounded border-gray-300 text-primary focus:ring-primary mt-1 cursor-pointer" type="checkbox"/>
+<div class="flex-1">
+<div class="flex justify-between items-start">
+<span class="text-lg font-bold text-text-main leading-tight">1x French Fries</span>
+</div>
+</div>
+</li>
+</ul>
+</div>
+<div class="p-3 border-t border-border-color bg-gray-50 flex gap-2">
+<button class="flex-1 bg-surface-white border border-border-color hover:bg-gray-100 text-text-secondary font-bold py-3 rounded-lg text-sm transition-colors">Recall</button>
+<button class="flex-[2] bg-primary hover:bg-primary-hover text-white font-bold py-3 rounded-lg text-lg shadow-sm transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">check</span> Ready
+                    </button>
+</div>
+</div>
+<div class="flex flex-col bg-surface-white rounded-xl shadow-soft border border-border-color overflow-hidden h-full transform transition-all hover:shadow-float">
+<div class="bg-success text-white p-3 flex justify-between items-center">
+<div class="flex flex-col">
+<span class="text-xs font-semibold opacity-90">Table 5 • Dine-in</span>
+<h2 class="text-xl font-bold">#1024</h2>
+</div>
+<div class="flex flex-col items-end">
+<span class="text-2xl font-bold font-mono">02:34</span>
+<span class="text-[10px] font-bold uppercase tracking-wider bg-white/20 px-2 py-0.5 rounded">New</span>
+</div>
+</div>
+<div class="flex-1 p-0 overflow-y-auto bg-white">
+<ul class="divide-y divide-border-color">
+<li class="p-4 flex gap-3 hover:bg-green-50/50 transition-colors">
+<input class="w-6 h-6 rounded border-gray-300 text-primary focus:ring-primary mt-1 cursor-pointer" type="checkbox"/>
+<div class="flex-1">
+<div class="flex justify-between items-start">
+<span class="text-lg font-bold text-text-main leading-tight">2x Classic Burger</span>
+</div>
+<div class="mt-1 flex flex-wrap gap-1">
+<span class="inline-flex items-center rounded-md bg-gray-100 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">Extra Cheese</span>
+<span class="inline-flex items-center rounded-md bg-red-100 px-2 py-1 text-xs font-medium text-red-800 ring-1 ring-inset ring-red-600/20">No Onion</span>
+</div>
+</div>
+</li>
+<li class="p-4 flex gap-3 hover:bg-green-50/50 transition-colors">
+<input class="w-6 h-6 rounded border-gray-300 text-primary focus:ring-primary mt-1 cursor-pointer" type="checkbox"/>
+<div class="flex-1">
+<div class="flex justify-between items-start">
+<span class="text-lg font-bold text-text-main leading-tight">1x Cappuccino</span>
+</div>
+<div class="mt-1 flex flex-wrap gap-1">
+<span class="inline-flex items-center rounded-md bg-gray-100 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">Oat Milk</span>
+</div>
+</div>
+</li>
+<li class="p-4 flex gap-3 hover:bg-green-50/50 transition-colors">
+<input class="w-6 h-6 rounded border-gray-300 text-primary focus:ring-primary mt-1 cursor-pointer" type="checkbox"/>
+<div class="flex-1">
+<div class="flex justify-between items-start">
+<span class="text-lg font-bold text-text-main leading-tight">1x French Fries</span>
+</div>
+</div>
+</li>
+</ul>
+</div>
+<div class="p-3 border-t border-border-color bg-gray-50 flex gap-2">
+<button class="flex-1 bg-surface-white border border-border-color hover:bg-gray-100 text-text-secondary font-bold py-3 rounded-lg text-sm transition-colors">Recall</button>
+<button class="flex-[2] bg-primary hover:bg-primary-hover text-white font-bold py-3 rounded-lg text-lg shadow-sm transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">check</span> Ready
+                    </button>
+</div>
+</div>
+<div class="flex flex-col bg-surface-white rounded-xl shadow-soft border border-border-color overflow-hidden h-full transform transition-all hover:shadow-float">
+<div class="bg-success text-white p-3 flex justify-between items-center">
+<div class="flex flex-col">
+<span class="text-xs font-semibold opacity-90">Delivery • UberEats</span>
+<h2 class="text-xl font-bold">#1025</h2>
+</div>
+<div class="flex flex-col items-end">
+<span class="text-2xl font-bold font-mono">01:12</span>
+<span class="text-[10px] font-bold uppercase tracking-wider bg-white/20 px-2 py-0.5 rounded">New</span>
+</div>
+</div>
+<div class="flex-1 p-0 overflow-y-auto bg-white">
+<ul class="divide-y divide-border-color">
+<li class="p-4 flex gap-3 hover:bg-green-50/50 transition-colors">
+<input class="w-6 h-6 rounded border-gray-300 text-primary focus:ring-primary mt-1 cursor-pointer" type="checkbox"/>
+<div class="flex-1">
+<div class="flex justify-between items-start">
+<span class="text-lg font-bold text-text-main leading-tight">2x Hazelnut Latte</span>
+</div>
+<div class="mt-1 flex flex-wrap gap-1">
+<span class="inline-flex items-center rounded-md bg-gray-100 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">Skim Milk</span>
+</div>
+</div>
+</li>
+<li class="p-4 flex gap-3 hover:bg-green-50/50 transition-colors">
+<input class="w-6 h-6 rounded border-gray-300 text-primary focus:ring-primary mt-1 cursor-pointer" type="checkbox"/>
+<div class="flex-1">
+<div class="flex justify-between items-start">
+<span class="text-lg font-bold text-text-main leading-tight">2x Choco Cake</span>
+</div>
+<div class="mt-1 flex flex-wrap gap-1">
+<span class="inline-flex items-center rounded-md bg-blue-100 px-2 py-1 text-xs font-medium text-blue-800 ring-1 ring-inset ring-blue-600/20">Birthday Candle</span>
+</div>
+</div>
+</li>
+</ul>
+</div>
+<div class="p-3 border-t border-border-color bg-gray-50 flex gap-2">
+<button class="flex-1 bg-surface-white border border-border-color hover:bg-gray-100 text-text-secondary font-bold py-3 rounded-lg text-sm transition-colors">Recall</button>
+<button class="flex-[2] bg-primary hover:bg-primary-hover text-white font-bold py-3 rounded-lg text-lg shadow-sm transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">check</span> Ready
+                    </button>
+</div>
+</div>
+<div class="flex flex-col bg-surface-white rounded-xl shadow-soft border border-border-color overflow-hidden h-full transform transition-all hover:shadow-float">
+<div class="bg-success text-white p-3 flex justify-between items-center">
+<div class="flex flex-col">
+<span class="text-xs font-semibold opacity-90">Table 2 • Dine-in</span>
+<h2 class="text-xl font-bold">#1026</h2>
+</div>
+<div class="flex flex-col items-end">
+<span class="text-2xl font-bold font-mono">00:45</span>
+<span class="text-[10px] font-bold uppercase tracking-wider bg-white/20 px-2 py-0.5 rounded">New</span>
+</div>
+</div>
+<div class="flex-1 p-0 overflow-y-auto bg-white">
+<ul class="divide-y divide-border-color">
+<li class="p-4 flex gap-3 hover:bg-green-50/50 transition-colors">
+<input class="w-6 h-6 rounded border-gray-300 text-primary focus:ring-primary mt-1 cursor-pointer" type="checkbox"/>
+<div class="flex-1">
+<div class="flex justify-between items-start">
+<span class="text-lg font-bold text-text-main leading-tight">1x Vanilla Scoop</span>
+</div>
+<div class="mt-1 flex flex-wrap gap-1">
+<span class="inline-flex items-center rounded-md bg-gray-100 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">Chocolate Syrup</span>
+</div>
+</div>
+</li>
+</ul>
+</div>
+<div class="p-3 border-t border-border-color bg-gray-50 flex gap-2">
+<button class="flex-1 bg-surface-white border border-border-color hover:bg-gray-100 text-text-secondary font-bold py-3 rounded-lg text-sm transition-colors">Recall</button>
+<button class="flex-[2] bg-primary hover:bg-primary-hover text-white font-bold py-3 rounded-lg text-lg shadow-sm transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">check</span> Ready
+                    </button>
+</div>
+</div>
+</div>
+</main>
+<div class="bg-surface-white border-t border-border-color px-6 py-2 flex justify-between items-center text-sm font-medium text-text-secondary shrink-0 z-10">
+<div class="flex items-center gap-6">
+<span class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-success"></span>
+<span>New Orders (3)</span>
+</span>
+<span class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-warning"></span>
+<span>Delayed (&gt; 8m)</span>
+</span>
+<span class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-urgent"></span>
+<span>Urgent (&gt; 15m)</span>
+</span>
+</div>
+<div class="flex items-center gap-4">
+<span>Server Connection: <span class="text-green-600 font-bold">Stable</span></span>
+<span class="text-xs text-text-muted">v2.4.1</span>
+</div>
+</div>
+
+</body></html>

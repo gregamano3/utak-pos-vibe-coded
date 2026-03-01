@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Customer Loyalty &amp; CRM Hub</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#059669", 
+                        "primary-hover": "#047857",
+                        "primary-light": "#d1fae5",
+                        "background-main": "#f3f4f6", 
+                        "surface-white": "#ffffff",
+                        "surface-accent": "#f9fafb",
+                        "text-main": "#1f2937", 
+                        "text-secondary": "#4b5563", 
+                        "text-muted": "#9ca3af",
+                        "border-color": "#e5e7eb",
+                        "tier-bronze": "#cd7f32",
+                        "tier-silver": "#94a3b8",
+                        "tier-gold": "#eab308",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"],
+                        "sans": ["Inter", "sans-serif"],
+                    },
+                    boxShadow: {
+                        "soft": "0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)",
+                        "card": "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)",
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f3f4f6;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #d1d5db;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #059669;
+        }
+    </style>
+</head>
+<body class="bg-background-main font-display text-text-main overflow-hidden h-screen flex flex-col antialiased">
+<header class="flex h-16 shrink-0 items-center justify-between border-b border-border-color bg-surface-white px-6 shadow-sm z-20">
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-3 text-primary">
+<span class="material-symbols-outlined text-3xl">diversity_3</span>
+<h1 class="text-xl font-bold tracking-tight text-text-main">SwiftCRM</h1>
+</div>
+<nav class="hidden md:flex items-center gap-1">
+<a class="px-3 py-2 text-sm font-medium text-text-secondary hover:text-primary transition-colors" href="#">Dashboard</a>
+<a class="px-3 py-2 text-sm font-bold text-primary bg-primary-light/30 rounded-md" href="#">Loyalty &amp; Customers</a>
+<a class="px-3 py-2 text-sm font-medium text-text-secondary hover:text-primary transition-colors" href="#">Campaigns</a>
+<a class="px-3 py-2 text-sm font-medium text-text-secondary hover:text-primary transition-colors" href="#">Analytics</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="hidden lg:flex items-center gap-2 rounded-lg bg-surface-accent border border-border-color p-1">
+<span class="px-3 text-xs font-semibold text-text-secondary uppercase">Balance:</span>
+<span class="text-sm font-bold text-primary mr-2">15,400 pts issued</span>
+</div>
+<div class="h-6 w-px bg-border-color"></div>
+<button class="relative flex h-10 w-10 items-center justify-center rounded-lg bg-surface-white border border-border-color text-text-secondary hover:bg-surface-accent hover:text-primary transition-colors shadow-sm">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute right-2 top-2 h-2 w-2 rounded-full bg-red-500 ring-2 ring-white"></span>
+</button>
+<button class="flex items-center gap-3 rounded-lg bg-surface-white pl-2 pr-4 py-1 hover:bg-surface-accent border border-transparent hover:border-border-color transition-colors">
+<div class="h-8 w-8 rounded-full bg-cover bg-center ring-2 ring-border-color" data-alt="User profile picture" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCdSsFcg1_7CsVpuqbOOyiDKaxS8_6BMmY99pnhLdpmIMOkT6dssZJtliCq8vpgYq0TQ56vyClWyx2xsEMAMi39MfgZYXnxJFH4YMA_akgyCt9MTs3oTcZhN_sAsCu-IQh1WRZyquLpQsZeoZv7d8Z0tO8REBNSjWFcdzfTraVAKhzdVRIWnAwXWzpRnkkRqWp63rvsNN3mc0F2fC5g4XXorRvteKZSANYo9dTT37pt2YgGLtJNjIhfRsIic7bT0mlUdSaSKZYMbGn3");'></div>
+<div class="flex flex-col items-start">
+<span class="text-xs font-medium text-text-main">Sarah Jenkins</span>
+<span class="text-[10px] text-primary font-semibold">Manager</span>
+</div>
+</button>
+</div>
+</header>
+<main class="flex flex-1 overflow-hidden bg-background-main">
+<aside class="w-64 bg-surface-white border-r border-border-color flex-col hidden lg:flex">
+<div class="p-6">
+<button class="w-full bg-primary hover:bg-primary-hover text-white font-semibold py-2.5 px-4 rounded-lg shadow-md transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[20px]">add</span>
+                    New Campaign
+                </button>
+</div>
+<nav class="flex-1 px-4 space-y-1 overflow-y-auto">
+<div class="text-xs font-semibold text-text-muted uppercase tracking-wider mb-2 px-2 mt-2">Directory</div>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-primary-light text-primary font-medium" href="#">
+<span class="material-symbols-outlined text-[20px]">groups</span>
+                    All Customers
+                </a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-secondary hover:bg-surface-accent hover:text-text-main font-medium transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]">verified</span>
+                    Loyalty Members
+                </a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-secondary hover:bg-surface-accent hover:text-text-main font-medium transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]">card_giftcard</span>
+                    Gift Cards
+                </a>
+<div class="text-xs font-semibold text-text-muted uppercase tracking-wider mb-2 px-2 mt-6">Tiers</div>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-secondary hover:bg-surface-accent hover:text-text-main font-medium transition-colors" href="#">
+<span class="w-2.5 h-2.5 rounded-full bg-tier-gold shadow-sm"></span>
+                    Gold VIPs
+                </a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-secondary hover:bg-surface-accent hover:text-text-main font-medium transition-colors" href="#">
+<span class="w-2.5 h-2.5 rounded-full bg-tier-silver shadow-sm"></span>
+                    Silver Regulars
+                </a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-secondary hover:bg-surface-accent hover:text-text-main font-medium transition-colors" href="#">
+<span class="w-2.5 h-2.5 rounded-full bg-tier-bronze shadow-sm"></span>
+                    Bronze Starters
+                </a>
+<div class="text-xs font-semibold text-text-muted uppercase tracking-wider mb-2 px-2 mt-6">Marketing</div>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-secondary hover:bg-surface-accent hover:text-text-main font-medium transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]">campaign</span>
+                    Active Campaigns
+                </a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-secondary hover:bg-surface-accent hover:text-text-main font-medium transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]">mail</span>
+                    Newsletters
+                </a>
+</nav>
+<div class="p-4 border-t border-border-color">
+<div class="bg-surface-accent rounded-lg p-3 border border-border-color">
+<div class="flex items-center justify-between mb-2">
+<span class="text-xs font-medium text-text-secondary">Loyalty Signups</span>
+<span class="text-xs font-bold text-primary">+12%</span>
+</div>
+<div class="h-1.5 w-full bg-gray-200 rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[75%] rounded-full"></div>
+</div>
+<p class="text-[10px] text-text-muted mt-2">Target: 100 new members/mo</p>
+</div>
+</div>
+</aside>
+<section class="flex flex-1 flex-col overflow-hidden">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 p-6 pb-2">
+<div class="bg-surface-white p-5 rounded-xl border border-border-color shadow-soft flex items-start justify-between">
+<div>
+<p class="text-sm font-medium text-text-muted">Total Loyal Customers</p>
+<h3 class="text-3xl font-bold text-text-main mt-1">2,845</h3>
+<div class="flex items-center mt-2 gap-1 text-xs font-medium text-primary bg-primary-light/50 w-fit px-2 py-0.5 rounded-full">
+<span class="material-symbols-outlined text-[14px]">trending_up</span>
+<span>+4.5% this month</span>
+</div>
+</div>
+<div class="p-3 bg-primary-light rounded-lg text-primary">
+<span class="material-symbols-outlined text-[24px]">groups</span>
+</div>
+</div>
+<div class="bg-surface-white p-5 rounded-xl border border-border-color shadow-soft flex items-start justify-between">
+<div>
+<p class="text-sm font-medium text-text-muted">Points Redeemed</p>
+<h3 class="text-3xl font-bold text-text-main mt-1">158.4k</h3>
+<div class="flex items-center mt-2 gap-1 text-xs font-medium text-primary bg-primary-light/50 w-fit px-2 py-0.5 rounded-full">
+<span class="material-symbols-outlined text-[14px]">arrow_upward</span>
+<span>12% redemption rate</span>
+</div>
+</div>
+<div class="p-3 bg-indigo-50 rounded-lg text-indigo-600">
+<span class="material-symbols-outlined text-[24px]">stars</span>
+</div>
+</div>
+<div class="bg-surface-white p-5 rounded-xl border border-border-color shadow-soft flex items-start justify-between">
+<div>
+<p class="text-sm font-medium text-text-muted">Avg. Visit Frequency</p>
+<h3 class="text-3xl font-bold text-text-main mt-1">3.2<span class="text-sm text-text-secondary font-medium ml-1">/ week</span></h3>
+<div class="flex items-center mt-2 gap-1 text-xs font-medium text-amber-600 bg-amber-50 w-fit px-2 py-0.5 rounded-full">
+<span class="material-symbols-outlined text-[14px]">repeat</span>
+<span>Top tier visits 5.1x</span>
+</div>
+</div>
+<div class="p-3 bg-amber-50 rounded-lg text-amber-600">
+<span class="material-symbols-outlined text-[24px]">calendar_month</span>
+</div>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto p-6 pt-4">
+<div class="flex flex-col gap-6">
+<div class="flex flex-col sm:flex-row justify-between items-center gap-4 bg-surface-white p-4 rounded-xl border border-border-color shadow-sm">
+<div class="relative w-full sm:w-96">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-text-muted text-[20px]">search</span>
+</div>
+<input class="block w-full pl-10 pr-3 py-2 border border-border-color rounded-lg leading-5 bg-background-main placeholder-text-muted focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary sm:text-sm" placeholder="Search by name, email, or phone..." type="text"/>
+</div>
+<div class="flex gap-2 w-full sm:w-auto">
+<button class="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-surface-white border border-border-color rounded-lg text-sm font-medium text-text-secondary hover:bg-surface-accent shadow-sm transition-all">
+<span class="material-symbols-outlined text-[18px]">filter_list</span>
+                                Filters
+                            </button>
+<button class="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-surface-white border border-border-color rounded-lg text-sm font-medium text-text-secondary hover:bg-surface-accent shadow-sm transition-all">
+<span class="material-symbols-outlined text-[18px]">download</span>
+                                Export
+                            </button>
+</div>
+</div>
+<div class="bg-surface-white rounded-xl border border-border-color shadow-card overflow-hidden">
+<div class="px-6 py-4 border-b border-border-color flex justify-between items-center bg-surface-accent/30">
+<h3 class="text-lg font-bold text-text-main">Recent Customer Activity</h3>
+<a class="text-sm font-semibold text-primary hover:text-primary-hover" href="#">View All</a>
+</div>
+<div class="overflow-x-auto">
+<table class="min-w-full divide-y divide-gray-200">
+<thead class="bg-gray-50">
+<tr>
+<th class="px-6 py-3 text-left text-xs font-medium text-text-muted uppercase tracking-wider" scope="col">Customer</th>
+<th class="px-6 py-3 text-left text-xs font-medium text-text-muted uppercase tracking-wider" scope="col">Tier</th>
+<th class="px-6 py-3 text-left text-xs font-medium text-text-muted uppercase tracking-wider" scope="col">Points Balance</th>
+<th class="px-6 py-3 text-left text-xs font-medium text-text-muted uppercase tracking-wider" scope="col">Last Visit</th>
+<th class="px-6 py-3 text-left text-xs font-medium text-text-muted uppercase tracking-wider" scope="col">Status</th>
+<th class="relative px-6 py-3" scope="col"><span class="sr-only">Actions</span></th>
+</tr>
+</thead>
+<tbody class="bg-white divide-y divide-gray-200">
+<tr class="hover:bg-gray-50 transition-colors cursor-pointer group">
+<td class="px-6 py-4 whitespace-nowrap">
+<div class="flex items-center">
+<div class="h-10 w-10 flex-shrink-0">
+<div class="h-10 w-10 rounded-full bg-cover bg-center ring-2 ring-border-color" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCRAC3EqlqA_quUvxm1dYNpHYmzH2XB8Z8KQ2M2dKlWiuX_9n0vWQhiDNrIaJmtIM6dOPqD8tTOF23VL5o1cop6wpSCMvKLhgiUzm-WPDICGHnlPLwaPnq9j-tEQNMpc7dryBMRt-6689NOkk0-6QyBQqLfm3n9uFUoUFeI7cu9xZ-nYUI0gujJIgDdAfiRESUTxscAxj8XlkDGvej6gXOg6l04VM1IjO12zOYqfg47q8JkKwC_80p64f5C6q8EZsp9ZYXTdTSDPifZ");'></div>
+</div>
+<div class="ml-4">
+<div class="text-sm font-semibold text-text-main">Emily Chen</div>
+<div class="text-xs text-text-muted">emily.c@example.com</div>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 whitespace-nowrap">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-yellow-100 text-yellow-800 border border-yellow-200">
+<span class="w-1.5 h-1.5 rounded-full bg-yellow-500 mr-1.5"></span>
+                                                Gold
+                                            </span>
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-text-main font-semibold">
+                                            2,450 pts
+                                        </td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-text-secondary">
+                                            Today, 10:30 AM
+                                        </td>
+<td class="px-6 py-4 whitespace-nowrap">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+                                                Active
+                                            </span>
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+<button class="text-text-muted hover:text-primary transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-gray-50 transition-colors cursor-pointer group">
+<td class="px-6 py-4 whitespace-nowrap">
+<div class="flex items-center">
+<div class="h-10 w-10 flex-shrink-0">
+<div class="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 font-bold">MR</div>
+</div>
+<div class="ml-4">
+<div class="text-sm font-semibold text-text-main">Marcus Rodriguez</div>
+<div class="text-xs text-text-muted">+1 (555) 012-3456</div>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 whitespace-nowrap">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-100 text-slate-800 border border-slate-200">
+<span class="w-1.5 h-1.5 rounded-full bg-slate-500 mr-1.5"></span>
+                                                Silver
+                                            </span>
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-text-main font-semibold">
+                                            850 pts
+                                        </td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-text-secondary">
+                                            Yesterday
+                                        </td>
+<td class="px-6 py-4 whitespace-nowrap">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+                                                Active
+                                            </span>
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+<button class="text-text-muted hover:text-primary transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-gray-50 transition-colors cursor-pointer group">
+<td class="px-6 py-4 whitespace-nowrap">
+<div class="flex items-center">
+<div class="h-10 w-10 flex-shrink-0">
+<div class="h-10 w-10 rounded-full bg-cover bg-center ring-2 ring-border-color" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBJwX8WAtnVOYvnrkFbZp6xSq5FYoib9nCkwIDkHxsb90Uj8WQcUmqh7fH-YvXkh49fyN6-6tsxsVN5h94cw2nH8s__YLrlMnxIT8v3CddKhSSoIR24g7cPuhD9TW5_4V65Sdi4HUvCmhry_93NtEGiN8Nv92NAGQNlaNixGwb9a8ZKw92dDM7_CwS4eV1-bQE2j-aEDSQv289S_KPZcb1AkfVYaAAanx7uxFqNPFnVCMDePNEL_EhFOQc95S1ISz54TQKbqw_Qgm6d");'></div>
+</div>
+<div class="ml-4">
+<div class="text-sm font-semibold text-text-main">Sarah Connor</div>
+<div class="text-xs text-text-muted">sarah.c@skynet.net</div>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 whitespace-nowrap">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-orange-100 text-orange-800 border border-orange-200">
+<span class="w-1.5 h-1.5 rounded-full bg-orange-500 mr-1.5"></span>
+                                                Bronze
+                                            </span>
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-text-main font-semibold">
+                                            120 pts
+                                        </td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-text-secondary">
+                                            3 days ago
+                                        </td>
+<td class="px-6 py-4 whitespace-nowrap">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
+<span class="material-symbols-outlined text-[14px]">snooze</span>
+                                                Dormant
+                                            </span>
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+<button class="text-text-muted hover:text-primary transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 pb-6">
+<div class="bg-surface-white rounded-xl border border-border-color shadow-card p-6">
+<h3 class="text-lg font-bold text-text-main mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">rocket_launch</span>
+                                Quick Campaign Launch
+                            </h3>
+<div class="space-y-4">
+<div>
+<label class="block text-sm font-medium text-text-secondary mb-1">Campaign Title</label>
+<input class="w-full rounded-lg border-border-color bg-background-main text-sm focus:border-primary focus:ring-primary" placeholder="e.g. Summer Weekend Flash Sale" type="text"/>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div>
+<label class="block text-sm font-medium text-text-secondary mb-1">Target Audience</label>
+<select class="w-full rounded-lg border-border-color bg-background-main text-sm focus:border-primary focus:ring-primary">
+<option>All Gold Members</option>
+<option>Inactive &gt; 30 Days</option>
+<option>Birthday this Month</option>
+</select>
+</div>
+<div>
+<label class="block text-sm font-medium text-text-secondary mb-1">Offer Type</label>
+<select class="w-full rounded-lg border-border-color bg-background-main text-sm focus:border-primary focus:ring-primary">
+<option>20% Off Coupon</option>
+<option>Double Points</option>
+<option>Free Item</option>
+</select>
+</div>
+</div>
+<div class="pt-2">
+<button class="w-full bg-primary hover:bg-primary-hover text-white font-bold py-3 px-4 rounded-lg shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2">
+                                        Send Campaign Now
+                                        <span class="material-symbols-outlined text-[18px]">send</span>
+</button>
+</div>
+</div>
+</div>
+<div class="bg-surface-white rounded-xl border border-border-color shadow-card p-6">
+<div class="flex justify-between items-center mb-4">
+<h3 class="text-lg font-bold text-text-main">Active Promotions</h3>
+<button class="text-xs font-semibold text-primary border border-primary/20 bg-primary-light/20 px-3 py-1 rounded-full hover:bg-primary-light transition-colors">Manage All</button>
+</div>
+<div class="space-y-3">
+<div class="flex items-center p-3 rounded-lg border border-border-color bg-surface-accent/30 hover:border-primary/30 transition-colors">
+<div class="h-10 w-10 rounded-lg bg-green-100 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">local_offer</span>
+</div>
+<div class="ml-3 flex-1">
+<div class="flex justify-between">
+<h4 class="text-sm font-bold text-text-main">Happy Hour 2x Points</h4>
+<span class="text-xs font-semibold text-green-600 bg-green-50 px-2 py-0.5 rounded">Active</span>
+</div>
+<div class="flex justify-between mt-1">
+<p class="text-xs text-text-muted">Mon-Fri, 4pm - 7pm</p>
+<p class="text-xs text-text-main font-medium">342 redemptions</p>
+</div>
+</div>
+</div>
+<div class="flex items-center p-3 rounded-lg border border-border-color bg-surface-accent/30 hover:border-primary/30 transition-colors">
+<div class="h-10 w-10 rounded-lg bg-purple-100 flex items-center justify-center text-purple-600">
+<span class="material-symbols-outlined">cake</span>
+</div>
+<div class="ml-3 flex-1">
+<div class="flex justify-between">
+<h4 class="text-sm font-bold text-text-main">Free Birthday Dessert</h4>
+<span class="text-xs font-semibold text-green-600 bg-green-50 px-2 py-0.5 rounded">Active</span>
+</div>
+<div class="flex justify-between mt-1">
+<p class="text-xs text-text-muted">Valid during birth month</p>
+<p class="text-xs text-text-main font-medium">12 claimed this week</p>
+</div>
+</div>
+</div>
+<div class="flex items-center p-3 rounded-lg border border-border-color bg-surface-accent/30 hover:border-primary/30 transition-colors opacity-75">
+<div class="h-10 w-10 rounded-lg bg-gray-100 flex items-center justify-center text-gray-500">
+<span class="material-symbols-outlined">coffee_maker</span>
+</div>
+<div class="ml-3 flex-1">
+<div class="flex justify-between">
+<h4 class="text-sm font-bold text-text-main">New Bean Launch</h4>
+<span class="text-xs font-semibold text-gray-500 bg-gray-100 px-2 py-0.5 rounded">Ended</span>
+</div>
+<div class="flex justify-between mt-1">
+<p class="text-xs text-text-muted">Last month special</p>
+<p class="text-xs text-text-main font-medium">Total: 890</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<aside class="w-[380px] shrink-0 bg-surface-white border-l border-border-color flex flex-col shadow-[0_0_20px_rgba(0,0,0,0.03)] z-10">
+<div class="p-6 border-b border-border-color flex flex-col items-center text-center bg-surface-accent/20">
+<div class="relative">
+<div class="h-24 w-24 rounded-full bg-cover bg-center ring-4 ring-white shadow-lg mb-3" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCRAC3EqlqA_quUvxm1dYNpHYmzH2XB8Z8KQ2M2dKlWiuX_9n0vWQhiDNrIaJmtIM6dOPqD8tTOF23VL5o1cop6wpSCMvKLhgiUzm-WPDICGHnlPLwaPnq9j-tEQNMpc7dryBMRt-6689NOkk0-6QyBQqLfm3n9uFUoUFeI7cu9xZ-nYUI0gujJIgDdAfiRESUTxscAxj8XlkDGvej6gXOg6l04VM1IjO12zOYqfg47q8JkKwC_80p64f5C6q8EZsp9ZYXTdTSDPifZ");'></div>
+<span class="absolute bottom-3 right-0 h-6 w-6 bg-tier-gold rounded-full border-2 border-white flex items-center justify-center text-white shadow-sm">
+<span class="material-symbols-outlined text-[14px]">star</span>
+</span>
+</div>
+<h2 class="text-xl font-bold text-text-main">Emily Chen</h2>
+<p class="text-sm text-text-secondary mb-3">Member since Aug 2022</p>
+<div class="flex gap-2">
+<button class="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-white border border-border-color text-xs font-semibold text-text-main shadow-sm hover:bg-gray-50 transition-colors">
+<span class="material-symbols-outlined text-[16px]">mail</span>
+                        Email
+                    </button>
+<button class="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-white border border-border-color text-xs font-semibold text-text-main shadow-sm hover:bg-gray-50 transition-colors">
+<span class="material-symbols-outlined text-[16px]">call</span>
+                        Call
+                    </button>
+<button class="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-white border border-border-color text-xs font-semibold text-text-main shadow-sm hover:bg-gray-50 transition-colors">
+<span class="material-symbols-outlined text-[16px]">edit</span>
+                        Edit
+                    </button>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto p-6 space-y-6">
+<div class="bg-gradient-to-br from-primary to-primary-hover rounded-xl p-5 text-white shadow-lg shadow-primary/20 relative overflow-hidden">
+<div class="absolute top-0 right-0 p-4 opacity-10">
+<span class="material-symbols-outlined text-[80px]">loyalty</span>
+</div>
+<div class="relative z-10">
+<p class="text-primary-light text-sm font-medium mb-1">Available Points</p>
+<h3 class="text-4xl font-bold mb-4">2,450</h3>
+<div class="flex justify-between items-center text-sm">
+<span class="opacity-90">Value: $24.50</span>
+<button class="bg-white/20 hover:bg-white/30 backdrop-blur-sm px-3 py-1 rounded text-xs font-bold transition-colors">Redeem</button>
+</div>
+</div>
+</div>
+<div>
+<h3 class="text-sm font-bold text-text-main uppercase tracking-wider mb-3">Recent Orders</h3>
+<div class="space-y-3">
+<div class="flex items-start gap-3 p-3 rounded-lg border border-border-color bg-gray-50 hover:bg-white transition-colors cursor-pointer">
+<div class="h-10 w-10 rounded bg-white border border-border-color flex items-center justify-center text-text-secondary shrink-0">
+<span class="material-symbols-outlined">receipt_long</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-center mb-1">
+<span class="text-sm font-bold text-text-main">Order #8821</span>
+<span class="text-xs font-medium text-text-muted">Today</span>
+</div>
+<p class="text-xs text-text-secondary truncate">Hazelnut Latte, Croissant</p>
+<div class="flex justify-between items-center mt-2">
+<span class="text-xs font-bold text-text-main">$8.50</span>
+<span class="text-[10px] font-bold text-green-600 bg-green-100 px-1.5 py-0.5 rounded">+85 pts</span>
+</div>
+</div>
+</div>
+<div class="flex items-start gap-3 p-3 rounded-lg border border-border-color bg-gray-50 hover:bg-white transition-colors cursor-pointer">
+<div class="h-10 w-10 rounded bg-white border border-border-color flex items-center justify-center text-text-secondary shrink-0">
+<span class="material-symbols-outlined">receipt_long</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-center mb-1">
+<span class="text-sm font-bold text-text-main">Order #8754</span>
+<span class="text-xs font-medium text-text-muted">Sep 12</span>
+</div>
+<p class="text-xs text-text-secondary truncate">Caesar Salad, Iced Tea</p>
+<div class="flex justify-between items-center mt-2">
+<span class="text-xs font-bold text-text-main">$12.50</span>
+<span class="text-[10px] font-bold text-green-600 bg-green-100 px-1.5 py-0.5 rounded">+125 pts</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div>
+<h3 class="text-sm font-bold text-text-main uppercase tracking-wider mb-3">Preferences &amp; Tags</h3>
+<div class="flex flex-wrap gap-2">
+<span class="px-2.5 py-1 rounded bg-blue-50 text-blue-700 text-xs font-medium border border-blue-100">Gluten Free</span>
+<span class="px-2.5 py-1 rounded bg-purple-50 text-purple-700 text-xs font-medium border border-purple-100">Weekend Regular</span>
+<span class="px-2.5 py-1 rounded bg-orange-50 text-orange-700 text-xs font-medium border border-orange-100">Coffee Lover</span>
+<button class="px-2.5 py-1 rounded border border-dashed border-gray-300 text-gray-500 text-xs font-medium hover:bg-gray-50">
+                             + Add Tag
+                         </button>
+</div>
+</div>
+<div>
+<h3 class="text-sm font-bold text-text-main uppercase tracking-wider mb-2">Internal Notes</h3>
+<div class="bg-yellow-50 p-3 rounded-lg border border-yellow-100 text-xs text-yellow-800 leading-relaxed">
+<p>Customer prefers oat milk in all coffee drinks. Always ask about new pastries.</p>
+</div>
+</div>
+</div>
+<div class="p-4 border-t border-border-color bg-surface-white">
+<button class="w-full flex items-center justify-center gap-2 rounded-lg bg-surface-white border border-border-color px-4 py-3 text-sm font-bold text-text-secondary hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition-colors">
+<span class="material-symbols-outlined text-[18px]">block</span>
+                     Block Customer
+                </button>
+</div>
+</aside>
+</main>
+
+</body></html>
