@@ -133,7 +133,7 @@ A Point-of-Sale (POS) and inventory management system for restaurants. Built wit
 ### Data
 
 - `.env` and `prisma/seed.ts` in `.gitignore` to avoid committing secrets/seeds
-- `public/uploads` ignored — uploads stored outside repo
+- `public/uploads` ignored — uploads stored in Docker volume (MVP); S3/R2 planned for future
 
 ### Recommendations for Production
 
@@ -210,7 +210,7 @@ If you don't have a PostgreSQL server, uncomment the `db` service and `db_data` 
 
 ### Volumes
 
-- `uploads_data` — Product images (mounted at `/app/public/uploads`)
+- `uploads_data` — Product images (mounted at `/app/public/uploads`). For MVP, uploads are stored in this Docker volume; migration to S3/R2 or similar object storage is planned for the future.
 - `db_data` — Only if you uncomment the bundled PostgreSQL service
 
 ### Daily Reset (Demo Mode)
