@@ -45,6 +45,9 @@ export default function LoginPage() {
                         </div>
                         <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Utak POS</h1>
                         <p className="text-sm text-slate-500 dark:text-zinc-400 mt-2">Sign in to continue</p>
+                        <p className="text-xs text-amber-600 dark:text-amber-400 mt-2 px-2">
+                            Demo: data resets every 12 MN
+                        </p>
                     </div>
 
                     <form action={(fd) => handleSubmit(fd, "form")} className="space-y-4">

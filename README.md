@@ -213,6 +213,12 @@ If you don't have a PostgreSQL server, uncomment the `db` service and `db_data` 
 - `uploads_data` — Product images (mounted at `/app/public/uploads`)
 - `db_data` — Only if you uncomment the bundled PostgreSQL service
 
+### Daily Reset (Demo Mode)
+
+When `ENABLE_DAILY_RESET=true` (default in Docker), the app resets all data at midnight (server timezone) and re-seeds with demo content. Useful for shared demo environments. To disable, set `ENABLE_DAILY_RESET=false`.
+
+Alternatively, call `POST /api/cron/daily-reset` with header `X-Cron-Secret: <CRON_SECRET>` (or `?secret=<CRON_SECRET>`) if using an external cron. Set `CRON_SECRET` in env when using this.
+
 ### Portainer Build Failing?
 
 If the stack build fails in Portainer, ensure the build has enough memory (the Next.js build uses ~2–4 GB). In Portainer: Stack → build settings → increase memory limit, or add `NODE_OPTIONS=--max-old-space-size=4096` to the build args.
