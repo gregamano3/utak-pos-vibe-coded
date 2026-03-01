@@ -3,6 +3,7 @@ import { formatCurrency } from "@/app/lib/currency"
 import { requireRole } from "@/app/lib/auth"
 import { Calendar as CalendarIcon, Filter } from "lucide-react"
 import { ReportExportButtons } from "./ReportExportButtons"
+import { ReportsOrderTable } from "./ReportsOrderTable"
 
 export default async function ReportsPage(props: {
     searchParams?: Promise<{
@@ -30,12 +31,13 @@ export default async function ReportsPage(props: {
         orderBy: { createdAt: 'desc' }
     })
 
-    const totalSales = orders.reduce((sum, order) => sum + order.totalAmount, 0)
-    const totalOrders = orders.length
+    const activeOrders = orders.filter((o) => o.status !== "VOIDED")
+    const totalSales = activeOrders.reduce((sum, order) => sum + order.totalAmount, 0)
+    const totalOrders = activeOrders.length
 
-    // Calculate Best Selling Product
+    // Calculate Best Selling Product (exclude voided)
     const productCounts: Record<string, number> = {}
-    orders.forEach(order => {
+    activeOrders.forEach(order => {
         order.items.forEach(item => {
             productCounts[item.productId] = (productCounts[item.productId] || 0) + item.quantity
         })
@@ -120,40 +122,7 @@ export default async function ReportsPage(props: {
                     <h2 className="text-lg font-semibold text-zinc-900 dark:text-white">Order History</h2>
                 </div>
                 <div className="overflow-x-auto">
-                    <table className="w-full text-sm text-left">
-                        <thead className="text-xs text-zinc-500 bg-zinc-50/50 dark:bg-zinc-900/50 border-b border-zinc-200 dark:border-zinc-800">
-                            <tr>
-                                <th className="px-6 py-3 font-medium">Order ID</th>
-                                <th className="px-6 py-3 font-medium">Date & Time</th>
-                                <th className="px-6 py-3 font-medium">Items</th>
-                                <th className="px-6 py-3 font-medium">Total Amount</th>
-                                <th className="px-6 py-3 font-medium">Payment</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-zinc-200 dark:divide-zinc-800">
-                            {orders.map(order => (
-                                <tr key={order.id} className="hover:bg-zinc-50 dark:hover:bg-zinc-900/50 transition-colors">
-                                    <td className="px-6 py-4 font-mono text-xs text-zinc-500">{order.id.slice(0, 8)}...</td>
-                                    <td className="px-6 py-4">
-                                        <span className="text-zinc-900 dark:text-white font-medium block">{order.createdAt.toLocaleDateString()}</span>
-                                        <span className="text-zinc-500 text-xs">{order.createdAt.toLocaleTimeString()}</span>
-                                    </td>
-                                    <td className="px-6 py-4 text-zinc-600 dark:text-zinc-400 font-medium">{order.items.reduce((acc, i) => acc + i.quantity, 0)} items</td>
-                                    <td className="px-6 py-4 font-bold text-zinc-900 dark:text-white">{formatCurrency(order.totalAmount)}</td>
-                                    <td className="px-6 py-4">
-                                        <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400">
-                                            CASH
-                                        </span>
-                                    </td>
-                                </tr>
-                            ))}
-                            {orders.length === 0 && (
-                                <tr>
-                                    <td colSpan={5} className="px-6 py-12 text-center text-zinc-500">No orders found for this date range.</td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
+                    <ReportsOrderTable orders={orders} />
                 </div>
             </div>
         </div>

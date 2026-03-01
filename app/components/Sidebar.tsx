@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, ShoppingCart, Package, List, BarChart3, Store, LogOut, Users, ChefHat, BookOpen, Settings } from "lucide-react";
+import { LayoutDashboard, ShoppingCart, Package, List, BarChart3, Store, LogOut, Users, ChefHat, BookOpen, Settings, ClipboardList } from "lucide-react";
 import { logout } from "@/app/lib/actions/auth";
 import { ThemeSwitcher } from "@/app/components/ThemeSwitcher";
 import type { CurrentUser } from "@/app/lib/auth";
@@ -17,6 +17,7 @@ const ALL_LINKS = [
     { name: "Reports", href: "/reports", icon: BarChart3 },
     { name: "Staff", href: "/staff", icon: Users },
     { name: "Kitchen", href: "/kitchen", icon: ChefHat },
+    { name: "Audit Trail", href: "/audit", icon: ClipboardList },
     { name: "Settings", href: "/settings", icon: Settings },
 ];
 

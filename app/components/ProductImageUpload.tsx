@@ -78,7 +78,7 @@ export function ProductImageUpload({ name = "imageUrl", defaultValue, className 
           )}
         </div>
         <div className="text-xs text-slate-500">
-          {imageUrl ? "Click × to remove" : "JPEG, PNG, WebP, GIF. Max 5MB"}
+          {imageUrl ? "Click × to remove" : "JPEG, PNG, WebP, GIF. Max 10MB (resized & converted to WebP)"}
         </div>
       </div>
       {error && <p className="mt-1 text-xs text-red-600">{error}</p>}

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
-import * as XLSX from "xlsx"
+import writeXlsxFile from "write-excel-file/node"
 import { getCurrentUser } from "@/app/lib/auth"
 import { getSalesReportData } from "@/app/lib/reports"
 import { formatCurrency } from "@/app/lib/currency"
@@ -21,10 +21,8 @@ export async function GET(request: NextRequest) {
 
   const data = await getSalesReportData(from, to)
 
-  const wb = XLSX.utils.book_new()
-
   // Summary sheet
-  const summaryData = [
+  const summaryData: (string | number)[][] = [
     ["Sales Report Summary"],
     ["Period", `${from.toLocaleDateString()} - ${data.to.toLocaleDateString()}`],
     [],
@@ -32,11 +30,9 @@ export async function GET(request: NextRequest) {
     ["Total Orders", data.totalOrders],
     ["Best Seller", data.bestSeller ? `${data.bestSeller.name} (${data.bestSeller.sold} units)` : "N/A"],
   ]
-  const wsSummary = XLSX.utils.aoa_to_sheet(summaryData)
-  XLSX.utils.book_append_sheet(wb, wsSummary, "Summary")
 
   // Order history sheet
-  const orderRows = [
+  const orderRows: (string | number)[][] = [
     ["Order ID", "Date", "Time", "Items", "Total Amount", "Payment"],
     ...data.orders.map((o) => [
       o.id.slice(0, 8) + "...",
@@ -47,18 +43,20 @@ export async function GET(request: NextRequest) {
       o.paymentMethod,
     ]),
   ]
-  const wsOrders = XLSX.utils.aoa_to_sheet(orderRows)
-  XLSX.utils.book_append_sheet(wb, wsOrders, "Order History")
 
   // Top products sheet
-  const productRows = [
+  const productRows: (string | number)[][] = [
     ["Product", "Units Sold"],
     ...data.salesData.map((p) => [p.name, p.sold]),
   ]
-  const wsProducts = XLSX.utils.aoa_to_sheet(productRows)
-  XLSX.utils.book_append_sheet(wb, wsProducts, "Top Products")
 
-  const buffer = XLSX.write(wb, { type: "buffer", bookType: "xlsx" })
+  const buffer = await writeXlsxFile(
+    [summaryData, orderRows, productRows],
+    {
+      sheets: ["Summary", "Order History", "Top Products"],
+      buffer: true,
+    }
+  )
   const filename = `sales-report-${from.toISOString().slice(0, 10)}-to-${data.to.toISOString().slice(0, 10)}.xlsx`
 
   return new NextResponse(buffer, {

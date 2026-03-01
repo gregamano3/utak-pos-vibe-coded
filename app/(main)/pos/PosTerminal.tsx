@@ -1,6 +1,9 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect } from "react"
+import { toast } from "sonner"
+import { jsPDF } from "jspdf"
+import autoTable from "jspdf-autotable"
 import { Search, Plus, SearchX, User, UtensilsCrossed, Minus, Trash2, ShoppingCart, Printer, ArrowRight } from "lucide-react"
 import { checkoutOrder } from "@/app/lib/actions/order"
 import { formatCurrency } from "@/app/lib/currency"
@@ -24,6 +27,22 @@ export function PosTerminal({ categories, allProducts }: { categories: Category[
         return categories.find(c => c.id === activeCategory)?.products || []
     }, [searchQuery, activeCategory, categories, allProducts])
 
+    // Hotkeys: 1-9 and 0 for first 10 products (keys work when not typing in search)
+    useEffect(() => {
+        function handleKeyDown(e: KeyboardEvent) {
+            const target = document.activeElement as HTMLElement
+            if (target?.tagName === "INPUT" || target?.tagName === "TEXTAREA" || target?.tagName === "SELECT") return
+            const key = e.key
+            const idx = key === "0" ? 9 : key >= "1" && key <= "9" ? parseInt(key, 10) - 1 : -1
+            if (idx >= 0 && displayedProducts[idx]) {
+                e.preventDefault()
+                addToCart(displayedProducts[idx])
+            }
+        }
+        window.addEventListener("keydown", handleKeyDown)
+        return () => window.removeEventListener("keydown", handleKeyDown)
+    }, [displayedProducts, orderType])
+
     const addToCart = (product: Product) => {
         setCart(prev => {
             const existing = prev.find(item => item.id === product.id)
@@ -35,13 +54,13 @@ export function PosTerminal({ categories, allProducts }: { categories: Category[
     }
 
     const updateQuantity = (id: string, delta: number) => {
-        setCart(prev => prev.map(item => {
-            if (item.id === id) {
+        setCart(prev =>
+            prev.flatMap(item => {
+                if (item.id !== id) return [item]
                 const newQty = item.quantity + delta
-                return newQty > 0 ? { ...item, quantity: newQty } : item
-            }
-            return item
-        }))
+                return newQty > 0 ? [{ ...item, quantity: newQty }] : []
+            })
+        )
     }
 
     const removeFromCart = (id: string) => {
@@ -67,12 +86,91 @@ export function PosTerminal({ categories, allProducts }: { categories: Category[
 
         if (result.success) {
             setCart([])
-            alert("Order completed successfully!")
+            toast.success("Order completed successfully!")
         } else {
-            alert(result.error || "Checkout failed")
+            toast.error(result.error || "Checkout failed")
         }
 
         setIsProcessing(false)
+    }
+
+    const handlePrintReceipt = () => {
+        if (cart.length === 0) {
+            toast.error("Add items to order first")
+            return
+        }
+        const doc = new jsPDF({ format: "a4", unit: "mm" })
+        const pageWidth = doc.internal.pageSize.getWidth()
+        let y = 20
+
+        // Header
+        doc.setFontSize(22)
+        doc.setFont("helvetica", "bold")
+        doc.text("OFFICIAL RECEIPT", pageWidth / 2, y, { align: "center" })
+        y += 10
+
+        doc.setFontSize(12)
+        doc.setFont("helvetica", "normal")
+        doc.text("Utak POS", pageWidth / 2, y, { align: "center" })
+        y += 6
+
+        doc.setFontSize(9)
+        doc.text(`Date: ${new Date().toLocaleString()}`, pageWidth / 2, y, { align: "center" })
+        y += 5
+        doc.text(`Order Type: ${orderType} | Payment: CASH`, pageWidth / 2, y, { align: "center" })
+        y += 12
+
+        // Items table
+        const tableData = cart.map((item) => [
+            String(item.quantity),
+            item.name,
+            formatCurrency(item.price),
+            formatCurrency(item.price * item.quantity),
+        ])
+
+        autoTable(doc, {
+            startY: y,
+            head: [["Qty", "Description", "Unit Price", "Amount"]],
+            body: tableData,
+            theme: "plain",
+            headStyles: { fillColor: [5, 150, 105], textColor: 255, fontStyle: "bold" },
+            margin: { left: 14, right: 14 },
+            columnStyles: {
+                0: { cellWidth: 15 },
+                1: { cellWidth: "auto" },
+                2: { cellWidth: 35, halign: "right" },
+                3: { cellWidth: 40, halign: "right" },
+            },
+        })
+
+        y = ((doc as unknown as { lastAutoTable?: { finalY: number } }).lastAutoTable?.finalY ?? y) + 10
+
+        // Totals
+        doc.setFont("helvetica", "normal")
+        doc.setFontSize(10)
+        doc.text(`Subtotal:`, pageWidth - 54, y)
+        doc.text(formatCurrency(totalAmount), pageWidth - 14, y, { align: "right" })
+        y += 6
+        doc.text(`Tax (10%):`, pageWidth - 54, y)
+        doc.text(formatCurrency(tax), pageWidth - 14, y, { align: "right" })
+        y += 8
+        doc.setFont("helvetica", "bold")
+        doc.setFontSize(12)
+        doc.text("Total:", pageWidth - 54, y)
+        doc.text(formatCurrency(finalTotal), pageWidth - 14, y, { align: "right" })
+        y += 15
+
+        doc.setFont("helvetica", "normal")
+        doc.setFontSize(9)
+        doc.text("Thank you for your order!", pageWidth / 2, y, { align: "center" })
+        y += 6
+        doc.text("— This is a computer-generated receipt —", pageWidth / 2, y, { align: "center" })
+
+        const blob = doc.output("blob")
+        const url = URL.createObjectURL(blob)
+        window.open(url, "_blank", "noopener,noreferrer")
+        URL.revokeObjectURL(url)
+        toast.success("Receipt opened in new tab")
     }
 
     const getProductImage = (p: { imageUrl?: string | null; name: string }) => {
@@ -140,25 +238,35 @@ export function PosTerminal({ categories, allProducts }: { categories: Category[
                 {/* Product Grid */}
                 <div className="flex-1 overflow-y-auto px-6 py-4">
                     <div className="grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 pb-6">
-                        {displayedProducts.map(p => (
-                            <div
-                                key={p.id}
-                                onClick={() => addToCart(p)}
-                                className="group relative flex cursor-pointer flex-col overflow-hidden rounded-xl bg-white border border-transparent shadow-[0_1px_3px_0_rgba(0,0,0,0.1)] hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
-                            >
+                        {displayedProducts.map((p, idx) => {
+                            const hotkey = idx < 9 ? String(idx + 1) : idx === 9 ? "0" : null
+                            return (
                                 <div
-                                    className="aspect-[4/3] w-full bg-cover bg-center"
-                                    style={{ backgroundImage: `url("${getProductImage(p)}")` }}
-                                ></div>
-                                <div className="flex flex-col p-4">
-                                    <h3 className="line-clamp-1 font-bold text-[#1f2937] text-base">{p.name}</h3>
-                                    <p className="mt-1 text-sm font-bold text-[#059669]">{formatCurrency(p.price)}</p>
+                                    key={p.id}
+                                    onClick={() => addToCart(p)}
+                                    className="group relative flex cursor-pointer flex-col overflow-hidden rounded-xl bg-white dark:bg-zinc-800 border border-transparent shadow-[0_1px_3px_0_rgba(0,0,0,0.1)] hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+                                >
+                                    <div
+                                        className="aspect-[4/3] w-full bg-cover bg-center"
+                                        style={{ backgroundImage: `url("${getProductImage(p)}")` }}
+                                    ></div>
+                                    <div className="flex flex-col p-4">
+                                        <h3 className="line-clamp-1 font-bold text-[#1f2937] dark:text-zinc-100 text-base">{p.name}</h3>
+                                        <div className="mt-1 flex items-center justify-between gap-2">
+                                            <p className="text-sm font-bold text-[#059669] dark:text-emerald-400">{formatCurrency(p.price)}</p>
+                                            {hotkey && (
+                                                <kbd className="px-1.5 py-0.5 text-[10px] font-mono font-semibold text-zinc-500 dark:text-zinc-400 bg-zinc-100 dark:bg-zinc-700 rounded border border-zinc-200 dark:border-zinc-600">
+                                                    {hotkey}
+                                                </kbd>
+                                            )}
+                                        </div>
+                                    </div>
+                                    <div className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-white dark:bg-zinc-800 text-[#059669] shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
+                                        <Plus size={20} strokeWidth={2} />
+                                    </div>
                                 </div>
-                                <div className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-white text-[#059669] shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
-                                    <Plus size={20} strokeWidth={2} />
-                                </div>
-                            </div>
-                        ))}
+                            )
+                        })}
                         {displayedProducts.length === 0 && (
                             <div className="col-span-full flex flex-col items-center justify-center text-zinc-400 py-12">
                                 <SearchX size={40} strokeWidth={2} className="mb-4" />
@@ -166,6 +274,11 @@ export function PosTerminal({ categories, allProducts }: { categories: Category[
                             </div>
                         )}
                     </div>
+                    {displayedProducts.length > 0 && (
+                        <p className="mt-4 text-center text-xs text-zinc-400 dark:text-zinc-500">
+                            Press <kbd className="px-1 py-0.5 font-mono bg-zinc-200 dark:bg-zinc-700 rounded text-[10px]">1</kbd>-<kbd className="px-1 py-0.5 font-mono bg-zinc-200 dark:bg-zinc-700 rounded text-[10px]">9</kbd> or <kbd className="px-1 py-0.5 font-mono bg-zinc-200 dark:bg-zinc-700 rounded text-[10px]">0</kbd> to add items (when not typing)
+                        </p>
+                    )}
                 </div>
             </section>
 
@@ -212,35 +325,49 @@ export function PosTerminal({ categories, allProducts }: { categories: Category[
                 {/* Order Items */}
                 <div className="flex-1 overflow-y-auto p-5 space-y-4 bg-[#f9fafb]/30">
                     {cart.map(item => (
-                        <div key={item.id} className="flex flex-col gap-2 rounded-xl bg-white p-4 border border-[#e5e7eb] shadow-sm hover:border-[#059669]/30 transition-colors">
-                            <div className="flex items-start justify-between">
-                                <div className="flex flex-col">
-                                    <span className="font-bold text-[#1f2937] text-[15px]">{item.name}</span>
-                                    <span className="text-xs font-medium text-[#4b5563] mt-0.5">{formatCurrency(item.price)} / ea</span>
-                                </div>
-                                <span className="font-bold text-[#1f2937] text-[15px]">
-                                    {formatCurrency(item.price * item.quantity)}
-                                </span>
+                        <div key={item.id} className="flex gap-3 rounded-xl bg-white p-3 border border-[#e5e7eb] shadow-sm hover:border-[#059669]/30 transition-colors">
+                            <div className="w-14 h-14 shrink-0 rounded-lg overflow-hidden bg-slate-100 dark:bg-zinc-800">
+                                <img
+                                    src={getProductImage(item)}
+                                    alt={item.name}
+                                    className="w-full h-full object-cover"
+                                />
                             </div>
-
-                            <div className="flex items-center justify-between mt-2 pt-2 border-t border-dashed border-gray-100">
-                                <div className="flex flex-wrap gap-1.5">
-                                    {/* Placeholder for modifiers if implemented later */}
+                            <div className="flex-1 flex flex-col gap-1 min-w-0">
+                                <div className="flex items-start justify-between gap-2">
+                                    <span className="font-bold text-[#1f2937] dark:text-zinc-100 text-[15px] truncate">{item.name}</span>
+                                    <span className="font-bold text-[#1f2937] dark:text-zinc-100 text-[15px] shrink-0">
+                                        {formatCurrency(item.price * item.quantity)}
+                                    </span>
                                 </div>
-                                <div className="flex items-center gap-3 rounded-md bg-gray-50 px-1 py-0.5 border border-[#e5e7eb] shadow-sm">
-                                    <button
-                                        onClick={() => updateQuantity(item.id, -1)}
-                                        className="flex h-6 w-6 items-center justify-center rounded text-[#4b5563] hover:bg-white hover:text-red-500 hover:shadow-sm transition-all"
-                                    >
-                                        {item.quantity === 1 ? <Trash2 size={16} strokeWidth={2} /> : <Minus size={16} strokeWidth={2} />}
-                                    </button>
-                                    <span className="min-w-[16px] text-center text-sm font-bold text-[#1f2937]">{item.quantity}</span>
-                                    <button
-                                        onClick={() => updateQuantity(item.id, 1)}
-                                        className="flex h-6 w-6 items-center justify-center rounded text-[#4b5563] hover:bg-white hover:text-[#059669] hover:shadow-sm transition-all"
-                                    >
-                                        <Plus size={16} strokeWidth={2} />
-                                    </button>
+                                <span className="text-xs font-medium text-[#4b5563] dark:text-zinc-400">{formatCurrency(item.price)} / ea</span>
+
+                                <button
+                                    onClick={() => removeFromCart(item.id)}
+                                    className="mt-2 flex items-center gap-1.5 text-xs font-medium text-rose-600 hover:text-rose-700 dark:text-rose-400 dark:hover:text-rose-300"
+                                    title="Remove from order"
+                                >
+                                    <Trash2 size={14} strokeWidth={2} />
+                                    Remove
+                                </button>
+
+                                <div className="flex items-center justify-between mt-1 pt-2 border-t border-dashed border-gray-100 dark:border-zinc-700">
+                                    <div className="flex flex-wrap gap-1.5" />
+                                    <div className="flex items-center gap-3 rounded-md bg-gray-50 dark:bg-zinc-800 px-1 py-0.5 border border-[#e5e7eb] dark:border-zinc-700 shadow-sm">
+                                        <button
+                                            onClick={() => updateQuantity(item.id, -1)}
+                                            className="flex h-6 w-6 items-center justify-center rounded text-[#4b5563] hover:bg-white hover:text-red-500 hover:shadow-sm transition-all"
+                                        >
+                                            <Minus size={16} strokeWidth={2} />
+                                        </button>
+                                        <span className="min-w-[16px] text-center text-sm font-bold text-[#1f2937] dark:text-zinc-100">{item.quantity}</span>
+                                        <button
+                                            onClick={() => updateQuantity(item.id, 1)}
+                                            className="flex h-6 w-6 items-center justify-center rounded text-[#4b5563] hover:bg-white hover:text-[#059669] hover:shadow-sm transition-all"
+                                        >
+                                            <Plus size={16} strokeWidth={2} />
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -279,7 +406,11 @@ export function PosTerminal({ categories, allProducts }: { categories: Category[
                             <Trash2 size={22} strokeWidth={2} className="mb-1" />
                             <span className="text-[11px] font-bold uppercase tracking-wider">Clear</span>
                         </button>
-                        <button className="flex flex-col items-center justify-center rounded-lg bg-[#f9fafb] p-2.5 text-[#4b5563] hover:bg-white hover:text-[#059669] hover:shadow-md border border-[#e5e7eb] transition-all duration-200">
+                        <button
+                            onClick={handlePrintReceipt}
+                            disabled={cart.length === 0}
+                            className="flex flex-col items-center justify-center rounded-lg bg-[#f9fafb] p-2.5 text-[#4b5563] hover:bg-white hover:text-[#059669] hover:shadow-md border border-[#e5e7eb] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
                             <Printer size={22} strokeWidth={2} className="mb-1" />
                             <span className="text-[11px] font-bold uppercase tracking-wider">Print</span>
                         </button>

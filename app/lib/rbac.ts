@@ -11,11 +11,12 @@ const ROUTE_ROLES: Record<string, Role[]> = {
   "/pos": ["ADMIN", "MANAGER", "STAFF", "CASHIER"],
   "/products": ["ADMIN", "MANAGER"],
   "/menu": ["ADMIN", "MANAGER"],
-  "/inventory": ["ADMIN", "MANAGER", "KITCHEN"],
+  "/inventory": ["ADMIN", "MANAGER", "KITCHEN", "CASHIER"],
   "/reports": ["ADMIN", "MANAGER", "CASHIER"],
   "/staff": ["ADMIN"],
   "/kitchen": ["ADMIN", "MANAGER", "KITCHEN"],
   "/settings": ["ADMIN"],
+  "/audit": ["ADMIN"],
 };
 
 export function canAccessRoute(pathname: string, role: Role): boolean {

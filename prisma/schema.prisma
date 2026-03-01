@@ -25,6 +25,7 @@ model User {
   updatedAt DateTime @updatedAt
   shifts    Shift[]
   orders    Order[]
+  auditLogs AuditLog[]
 }
 
 model Category {
@@ -113,4 +114,15 @@ model Shift {
   status    String    @default("ACTIVE") // ACTIVE or COMPLETED
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
+}
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  action    String   // e.g. ORDER_CREATED, USER_CREATED, USER_UPDATED, USER_DELETED
+  entity    String   // e.g. order, user
+  entityId  String?  // ID of the affected record
+  details   String?  // JSON or human-readable summary
+  userId    String?  // Who performed the action
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  createdAt DateTime @default(now())
 }

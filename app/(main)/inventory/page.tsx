@@ -4,7 +4,7 @@ import { requireRole } from "@/app/lib/auth"
 import { Plus, Trash2, Save, Download, Package, ChefHat, CornerDownRight, X } from "lucide-react"
 
 export default async function InventoryPage() {
-    await requireRole(["ADMIN", "MANAGER", "KITCHEN"]);
+    await requireRole(["ADMIN", "MANAGER", "KITCHEN", "CASHIER"]);
     const ingredients = await prisma.ingredient.findMany({
         orderBy: { name: 'asc' },
         include: { inventory: true }

@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { Plus, Pencil, Trash2, X } from "lucide-react";
+import { ConfirmDialog } from "@/app/components/ConfirmDialog";
 
 const ROLES = ["ADMIN", "MANAGER", "STAFF", "CASHIER", "KITCHEN"] as const;
 
@@ -23,71 +25,68 @@ type Props = {
 
 export function UserSettingsClient({ users, createUser, updateUser, deleteUser }: Props) {
   const router = useRouter();
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
   const [showAdd, setShowAdd] = useState(false);
+  const [deleteConfirm, setDeleteConfirm] = useState<{ userId: string } | null>(null);
 
   async function handleCreate(formData: FormData) {
-    setError("");
-    setSuccess("");
     const res = await createUser(formData);
-    if (res.error) setError(res.error);
+    if (res.error) toast.error(res.error);
     else {
-      setSuccess("User created");
+      toast.success("User created");
       setShowAdd(false);
       router.refresh();
     }
   }
 
   async function handleUpdate(userId: string, formData: FormData) {
-    setError("");
-    setSuccess("");
     const res = await updateUser(userId, formData);
-    if (res.error) setError(res.error);
+    if (res.error) toast.error(res.error);
     else {
-      setSuccess("User updated");
+      toast.success("User updated");
       setEditingId(null);
       router.refresh();
     }
   }
 
-  async function handleDelete(userId: string) {
-    if (!confirm("Delete this user? This cannot be undone.")) return;
-    setError("");
-    setSuccess("");
+  function requestDelete(userId: string) {
+    setDeleteConfirm({ userId });
+  }
+
+  async function handleDelete() {
+    if (!deleteConfirm) return;
+    const userId = deleteConfirm.userId;
+    setDeleteConfirm(null);
     const res = await deleteUser(userId);
-    if (res.error) setError(res.error);
+    if (res.error) toast.error(res.error);
     else {
-      setSuccess("User deleted");
+      toast.success("User deleted");
       router.refresh();
     }
   }
 
   return (
     <>
+      <ConfirmDialog
+        open={!!deleteConfirm}
+        title="Delete user"
+        message="Delete this user? This cannot be undone."
+        confirmLabel="Delete"
+        variant="danger"
+        onConfirm={handleDelete}
+        onCancel={() => setDeleteConfirm(null)}
+      />
       <div className="bg-white dark:bg-zinc-950 rounded-xl border border-slate-200 dark:border-zinc-800 shadow-sm overflow-hidden">
         <div className="px-6 py-5 border-b border-slate-100 dark:border-zinc-800 flex justify-between items-center">
           <h3 className="text-lg font-bold text-slate-900 dark:text-white">Users</h3>
           <button
-            onClick={() => { setShowAdd(!showAdd); setError(""); setSuccess(""); }}
+            onClick={() => { setShowAdd(!showAdd); }}
             className="flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-semibold transition-colors"
           >
             <Plus size={18} />
             Add User
           </button>
         </div>
-
-        {error && (
-          <div className="mx-6 mt-4 p-3 text-sm text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-900/20 border border-rose-100 dark:border-rose-900/30 rounded-lg">
-            {error}
-          </div>
-        )}
-        {success && (
-          <div className="mx-6 mt-4 p-3 text-sm text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-900/30 rounded-lg">
-            {success}
-          </div>
-        )}
 
         {showAdd && (
           <form action={handleCreate} className="p-6 border-b border-slate-100 dark:border-zinc-800 bg-slate-50 dark:bg-zinc-900/50">
@@ -213,7 +212,7 @@ export function UserSettingsClient({ users, createUser, updateUser, deleteUser }
                             <Pencil size={16} />
                           </button>
                           <button
-                            onClick={() => handleDelete(user.id)}
+                            onClick={() => requestDelete(user.id)}
                             className="p-2 rounded-lg text-slate-500 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-900/20 transition-colors"
                             title="Delete"
                           >

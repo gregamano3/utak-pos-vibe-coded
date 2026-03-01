@@ -6,20 +6,18 @@ export async function getSalesReportData(from: Date, to: Date) {
 
   const orders = await prisma.order.findMany({
     where: {
-      createdAt: {
-        gte: from,
-        lte: toEnd,
-      },
+      createdAt: { gte: from, lte: toEnd },
     },
     include: { items: { include: { product: true } } },
     orderBy: { createdAt: "desc" },
   })
 
-  const totalSales = orders.reduce((sum, o) => sum + o.totalAmount, 0)
-  const totalOrders = orders.length
+  const activeOrders = orders.filter((o) => o.status !== "VOIDED")
+  const totalSales = activeOrders.reduce((sum, o) => sum + o.totalAmount, 0)
+  const totalOrders = activeOrders.length
 
   const productCounts: Record<string, number> = {}
-  orders.forEach((order) => {
+  activeOrders.forEach((order) => {
     order.items.forEach((item) => {
       productCounts[item.productId] = (productCounts[item.productId] || 0) + item.quantity
     })
@@ -41,7 +39,7 @@ export async function getSalesReportData(from: Date, to: Date) {
   return {
     from,
     to: toEnd,
-    orders,
+    orders: activeOrders, // Exclude voided for exports (PDF/Excel)
     totalSales,
     totalOrders,
     bestSeller,

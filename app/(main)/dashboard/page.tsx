@@ -22,9 +22,12 @@ export default async function DashboardPage() {
     const yesterday = new Date(today)
     yesterday.setDate(yesterday.getDate() - 1)
 
-    // 1. Today's Sales
+    // 1. Today's Sales (exclude voided)
     const todaysOrders = await prisma.order.findMany({
-        where: { createdAt: { gte: today } }
+        where: {
+            createdAt: { gte: today },
+            status: { not: "VOIDED" },
+        },
     })
     const todaySales = todaysOrders.reduce((sum, order) => sum + order.totalAmount, 0)
     const todayCount = todaysOrders.length
@@ -41,10 +44,13 @@ export default async function DashboardPage() {
         take: 5
     })
 
-    // 3. Best Selling Product Today
+    // 3. Best Selling Product Today (exclude voided orders)
     const topItems = await prisma.orderItem.groupBy({
-        by: ['productId'],
-        where: { createdAt: { gte: today } },
+        by: ["productId"],
+        where: {
+            createdAt: { gte: today },
+            order: { status: { not: "VOIDED" } },
+        },
         _sum: { quantity: true },
         orderBy: { _sum: { quantity: 'desc' } },
         take: 4

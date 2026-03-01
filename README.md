@@ -49,7 +49,7 @@ A Point-of-Sale (POS) and inventory management system for restaurants. Built wit
 - **Styling:** Tailwind CSS v4
 - **Auth:** Cookie-based session, bcrypt
 - **Icons:** Lucide React
-- **Reports:** jsPDF, jspdf-autotable, xlsx (SheetJS)
+- **Reports:** jsPDF, jspdf-autotable, write-excel-file
 - **Deployment:** Docker (standalone output)
 
 ---
