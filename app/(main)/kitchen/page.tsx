@@ -29,7 +29,7 @@ export default async function KitchenPage() {
     return (
         <KitchenRefreshWrapper>
             <div className="flex-1 flex flex-col h-screen overflow-y-auto bg-slate-100 dark:bg-zinc-900 text-slate-800 dark:text-zinc-100 font-sans">
-                <header className="h-16 border-b border-slate-200 dark:border-zinc-800 flex items-center justify-between px-6 bg-white dark:bg-zinc-950 flex-shrink-0 z-10 sticky top-0 shadow-sm">
+                <header className="h-16 border-b border-slate-200 dark:border-zinc-800 flex items-center justify-between px-4 sm:px-6 bg-white dark:bg-zinc-950 flex-shrink-0 z-10 sticky top-0 shadow-sm">
                     <div>
                         <h2 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">
                             Kitchen Display

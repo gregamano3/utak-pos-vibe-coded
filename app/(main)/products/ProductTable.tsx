@@ -37,14 +37,14 @@ export function ProductTable({ products, categories }: { products: Product[]; ca
 
   return (
     <div className="overflow-x-auto">
-      <table className="w-full text-left text-sm whitespace-nowrap">
-        <thead className="bg-slate-50/50 text-slate-500 uppercase text-xs tracking-wider border-b border-slate-100">
+      <table className="w-full text-left text-sm whitespace-nowrap min-w-[600px]">
+        <thead className="bg-slate-50/50 dark:bg-zinc-900/50 text-slate-500 dark:text-zinc-400 uppercase text-xs tracking-wider border-b border-slate-100 dark:border-zinc-800">
           <tr>
-            <th className="px-6 py-4 font-semibold">Product Info</th>
-            <th className="px-6 py-4 font-semibold">Category</th>
-            <th className="px-6 py-4 font-semibold">Price</th>
-            <th className="px-6 py-4 font-semibold text-center">Recipe Setup</th>
-            <th className="px-6 py-4 font-semibold w-10 text-right">Actions</th>
+            <th className="px-4 sm:px-6 py-3 sm:py-4 font-semibold">Product Info</th>
+            <th className="px-4 sm:px-6 py-3 sm:py-4 font-semibold">Category</th>
+            <th className="px-4 sm:px-6 py-3 sm:py-4 font-semibold">Price</th>
+            <th className="px-4 sm:px-6 py-3 sm:py-4 font-semibold text-center">Recipe Setup</th>
+            <th className="px-4 sm:px-6 py-3 sm:py-4 font-semibold w-10 text-right">Actions</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-slate-100 bg-white">
@@ -119,7 +119,7 @@ export function ProductTable({ products, categories }: { products: Product[]; ca
                   </td>
                 ) : (
                   <>
-                    <td className="px-6 py-5 text-slate-900 font-medium">
+                    <td className="px-4 sm:px-6 py-4 sm:py-5 text-slate-900 dark:text-zinc-100 font-medium">
                       <div className="flex items-center gap-4">
                         <div
                           className="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center text-xs font-bold ring-1 ring-inset ring-slate-200 bg-cover bg-center shadow-sm"
@@ -131,15 +131,15 @@ export function ProductTable({ products, categories }: { products: Product[]; ca
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-5">
-                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-slate-100 text-slate-700 ring-1 ring-inset ring-slate-200">
+                    <td className="px-4 sm:px-6 py-4 sm:py-5">
+                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 ring-1 ring-inset ring-slate-200 dark:ring-zinc-700">
                         {p.category.name}
                       </span>
                     </td>
-                    <td className="px-6 py-5">
-                      <span className="text-lg font-bold text-slate-900">{formatCurrency(p.price)}</span>
+                    <td className="px-4 sm:px-6 py-4 sm:py-5">
+                      <span className="text-lg font-bold text-slate-900 dark:text-zinc-100">{formatCurrency(p.price)}</span>
                     </td>
-                    <td className="px-6 py-5 text-center">
+                    <td className="px-4 sm:px-6 py-4 sm:py-5 text-center">
                       {hasRecipe ? (
                         <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-green-50 text-green-700 border border-green-200">
                           <CheckCircle size={14} strokeWidth={2} /> Configured
@@ -150,7 +150,7 @@ export function ProductTable({ products, categories }: { products: Product[]; ca
                         </span>
                       )}
                     </td>
-                    <td className="px-6 py-5 text-right">
+                    <td className="px-4 sm:px-6 py-4 sm:py-5 text-right">
                       <div className="flex items-center justify-end gap-1">
                         <button
                           onClick={() => setEditingId(p.id)}

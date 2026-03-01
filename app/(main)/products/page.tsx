@@ -27,7 +27,7 @@ export default async function ProductsPage() {
         <div className="flex-1 flex flex-col h-screen overflow-y-auto relative bg-slate-50 dark:bg-zinc-900 text-slate-800 dark:text-zinc-100 font-sans antialiased selection:bg-emerald-500/20 selection:text-emerald-600 dark:selection:text-emerald-400">
 
             {/* Header Area */}
-            <header className="sticky top-0 z-40 flex items-center justify-between border-b border-slate-200 bg-white/90 backdrop-blur-md px-8 py-4 shadow-sm">
+            <header className="sticky top-0 z-40 flex items-center justify-between border-b border-slate-200 dark:border-zinc-800 bg-white/90 dark:bg-zinc-950/90 backdrop-blur-md px-4 sm:px-6 md:px-8 py-4 shadow-sm">
                 <div>
                     <h1 className="text-2xl font-bold tracking-tight text-slate-900">Menu Catalog</h1>
                     <p className="text-slate-500 text-sm mt-1 font-medium">Manage categories, products, and pricing.</p>
