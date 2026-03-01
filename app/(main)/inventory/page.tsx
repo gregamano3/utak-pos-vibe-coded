@@ -21,9 +21,9 @@ export default async function InventoryPage() {
 
     return (
         <div className="flex-1 flex flex-col min-w-0 overflow-y-auto bg-slate-50 dark:bg-zinc-900 text-slate-900 dark:text-zinc-100 font-sans selection:bg-emerald-500/20 selection:text-emerald-600 dark:selection:text-emerald-400">
-            <header className="h-16 flex items-center justify-between px-6 border-b border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 sticky top-0 z-10 shrink-0">
+            <header className="h-16 flex items-center justify-between px-4 sm:px-6 border-b border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 sticky top-0 z-10 shrink-0">
                 <div className="flex items-center gap-4">
-                    <h2 className="text-lg font-bold text-slate-800 hidden md:block">Stock Management & Recipes</h2>
+                    <h2 className="text-base sm:text-lg font-bold text-slate-800 dark:text-zinc-100">Stock Management & Recipes</h2>
                 </div>
             </header>
 
@@ -52,7 +52,7 @@ export default async function InventoryPage() {
                             <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
                                 <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider mb-4">Add New Item</h3>
                                 <form action={createIngredient} className="flex gap-3 flex-wrap sm:flex-nowrap">
-                                    <div className="relative flex-1 min-w-[200px]">
+                                    <div className="relative flex-1 min-w-0 sm:min-w-[200px]">
                                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
                                             <Package size={18} strokeWidth={2} />
                                         </div>

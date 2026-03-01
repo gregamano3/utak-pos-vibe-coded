@@ -58,7 +58,7 @@ export default async function ReportsPage(props: {
     const bestSeller = salesData[0]
 
     return (
-        <div className="p-8 max-w-7xl mx-auto space-y-8">
+        <div className="p-4 sm:p-6 md:p-8 max-w-7xl mx-auto space-y-6 md:space-y-8">
             <header className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-white">Sales Reports</h1>
@@ -71,7 +71,7 @@ export default async function ReportsPage(props: {
                         to={to.toISOString().split("T")[0]}
                     />
                     {/* Simple Date Filter Form */}
-                    <form className="bg-white dark:bg-zinc-950 p-2 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-800 flex items-center gap-2">
+                    <form className="bg-white dark:bg-zinc-950 p-2 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-800 flex flex-wrap items-center gap-2">
                     <CalendarIcon size={18} className="text-zinc-400 ml-2" />
                     <input
                         type="date"

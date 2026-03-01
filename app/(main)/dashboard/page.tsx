@@ -93,7 +93,7 @@ export default async function DashboardPage() {
         <div className="flex-1 flex flex-col h-screen overflow-y-auto relative bg-slate-50 dark:bg-zinc-900 text-slate-800 dark:text-zinc-100 font-sans selection:bg-emerald-500/20 selection:text-emerald-600 dark:selection:text-emerald-400">
 
             {/* Header */}
-            <header className="flex items-center justify-between px-8 py-6 sticky top-0 bg-slate-50/80 dark:bg-zinc-900/80 backdrop-blur-md z-10 border-b border-slate-200 dark:border-zinc-800">
+            <header className="flex items-center justify-between px-4 sm:px-6 md:px-8 py-4 sm:py-6 sticky top-0 bg-slate-50/80 dark:bg-zinc-900/80 backdrop-blur-md z-10 border-b border-slate-200 dark:border-zinc-800">
                 <div>
                     <h1 className="text-2xl font-bold tracking-tight text-slate-800 dark:text-white">Dashboard Overview</h1>
                     <p className="text-slate-500 dark:text-zinc-400 text-sm mt-1 font-medium">Welcome back, {user.username}</p>
@@ -117,7 +117,7 @@ export default async function DashboardPage() {
                 </div>
             </header>
 
-            <div className="px-8 pb-10 flex flex-col gap-6 max-w-[1600px] w-full mx-auto mt-2">
+            <div className="px-4 sm:px-6 md:px-8 pb-6 md:pb-10 flex flex-col gap-6 max-w-[1600px] w-full mx-auto mt-2">
 
                 {/* Metric Cards Row */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -205,8 +205,8 @@ export default async function DashboardPage() {
                     <div className="lg:col-span-2 flex flex-col gap-6">
 
                         {/* Peak Hours Heatmap (Visual only placeholder as requested in design) */}
-                        <div className="bg-white dark:bg-zinc-950 p-8 rounded-2xl border border-slate-100 dark:border-zinc-800 shadow-[0_4px_20px_-2px_rgba(0,0,0,0.03)] dark:shadow-none">
-                            <div className="flex justify-between items-start mb-8">
+                        <div className="bg-white dark:bg-zinc-950 p-4 sm:p-6 md:p-8 rounded-2xl border border-slate-100 dark:border-zinc-800 shadow-[0_4px_20px_-2px_rgba(0,0,0,0.03)] dark:shadow-none">
+                            <div className="flex flex-col sm:flex-row justify-between items-start gap-4 mb-6 md:mb-8">
                                 <div>
                                     <h3 className="text-lg font-bold text-slate-800 dark:text-white">Peak Hours Activity</h3>
                                     <p className="text-slate-500 dark:text-zinc-400 text-sm mt-1">Store traffic heatmap based on transaction volume</p>
@@ -217,7 +217,7 @@ export default async function DashboardPage() {
                                 </div>
                             </div>
 
-                            <div className="flex items-end gap-6 h-64 w-full px-2">
+                            <div className="flex items-end gap-2 sm:gap-4 md:gap-6 h-64 w-full px-1 sm:px-2 overflow-x-auto hide-scrollbar">
                                 <div className="flex flex-col items-center flex-1 h-full justify-end gap-3 group">
                                     <div className="w-full bg-slate-100 rounded-xl relative overflow-hidden group-hover:bg-slate-200 transition-all h-full flex flex-col justify-end">
                                         <div className="bg-emerald-200 w-full rounded-xl" style={{ height: "40%" }}></div>
@@ -266,7 +266,7 @@ export default async function DashboardPage() {
                         </div>
 
                         {/* Top Selling Items Table */}
-                        <div className="bg-white dark:bg-zinc-950 p-8 rounded-2xl border border-slate-100 dark:border-zinc-800 shadow-[0_4px_20px_-2px_rgba(0,0,0,0.03)] dark:shadow-none flex-1">
+                        <div className="bg-white dark:bg-zinc-950 p-4 sm:p-6 md:p-8 rounded-2xl border border-slate-100 dark:border-zinc-800 shadow-[0_4px_20px_-2px_rgba(0,0,0,0.03)] dark:shadow-none flex-1 overflow-hidden">
                             <div className="flex justify-between items-center mb-6">
                                 <h3 className="text-lg font-bold text-slate-800 dark:text-white">Top Selling Items</h3>
                                 <Link href="/reports" className="text-sm font-semibold text-[#10b981] hover:text-[#059669]">View Reports</Link>
@@ -308,7 +308,7 @@ export default async function DashboardPage() {
                     <div className="flex flex-col gap-6">
 
                         {/* Food Cost Widget */}
-                        <div className="bg-white dark:bg-zinc-950 p-8 rounded-2xl border border-slate-100 dark:border-zinc-800 shadow-[0_4px_20px_-2px_rgba(0,0,0,0.03)] dark:shadow-none">
+                        <div className="bg-white dark:bg-zinc-950 p-4 sm:p-6 md:p-8 rounded-2xl border border-slate-100 dark:border-zinc-800 shadow-[0_4px_20px_-2px_rgba(0,0,0,0.03)] dark:shadow-none">
                             <div className="flex justify-between items-start mb-2">
                                 <h3 className="text-lg font-bold text-slate-800 dark:text-white">Cost %</h3>
                                 <button type="button" className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-zinc-800 cursor-pointer text-slate-500 dark:text-zinc-400">
@@ -317,7 +317,7 @@ export default async function DashboardPage() {
                             </div>
                             <p className="text-sm text-[#64748b] mb-8">Current cost vs revenue ratio</p>
 
-                            <div className="flex items-center justify-center relative h-52 w-52 mx-auto mb-6">
+                            <div className="flex items-center justify-center relative h-40 w-40 sm:h-52 sm:w-52 mx-auto mb-6">
                                 <svg className="h-full w-full rotate-[-90deg]" viewBox="0 0 36 36">
                                     <path className="text-slate-100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" strokeWidth="2.5"></path>
                                     <path className="text-[#10b981] drop-shadow-md" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" strokeDasharray="28, 100" strokeLinecap="round" strokeWidth="2.5"></path>
@@ -338,7 +338,7 @@ export default async function DashboardPage() {
                         </div>
 
                         {/* Low Stock Alerts */}
-                        <div className="bg-white dark:bg-zinc-950 p-8 rounded-2xl border border-slate-100 dark:border-zinc-800 shadow-[0_4px_20px_-2px_rgba(0,0,0,0.03)] dark:shadow-none flex-1 flex flex-col">
+                        <div className="bg-white dark:bg-zinc-950 p-4 sm:p-6 md:p-8 rounded-2xl border border-slate-100 dark:border-zinc-800 shadow-[0_4px_20px_-2px_rgba(0,0,0,0.03)] dark:shadow-none flex-1 flex flex-col">
                             <div className="flex items-center justify-between mb-6">
                                 <h3 className="text-lg font-bold text-slate-800 dark:text-white">Low Stock Alerts</h3>
                                 <Link href="/inventory" className="text-xs font-semibold text-[#10b981] hover:text-[#059669] hover:underline">View All</Link>

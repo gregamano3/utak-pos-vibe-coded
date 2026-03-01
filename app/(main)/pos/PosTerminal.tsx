@@ -4,7 +4,7 @@ import { useState, useMemo, useEffect } from "react"
 import { toast } from "sonner"
 import { jsPDF } from "jspdf"
 import autoTable from "jspdf-autotable"
-import { Search, Plus, SearchX, User, UtensilsCrossed, Minus, Trash2, ShoppingCart, Printer, ArrowRight } from "lucide-react"
+import { Search, Plus, SearchX, User, UtensilsCrossed, Minus, Trash2, ShoppingCart, Printer, ArrowRight, ChevronUp, X } from "lucide-react"
 import { checkoutOrder } from "@/app/lib/actions/order"
 import { formatCurrency } from "@/app/lib/currency"
 
@@ -189,13 +189,15 @@ export function PosTerminal({ categories, allProducts }: { categories: Category[
     }
 
 
+    const [cartOpen, setCartOpen] = useState(false)
+
     return (
-        <div className="flex h-full bg-slate-100 dark:bg-zinc-900 font-sans text-slate-800 dark:text-zinc-100 overflow-hidden antialiased">
+        <div className="flex flex-col lg:flex-row h-full bg-slate-100 dark:bg-zinc-900 font-sans text-slate-800 dark:text-zinc-100 overflow-hidden antialiased">
 
             {/* Main Product Area */}
-            <section className="flex flex-1 flex-col overflow-hidden">
+            <section className="flex flex-1 flex-col overflow-hidden min-w-0">
                 {/* Categories Scroll Nav */}
-                <div className="flex w-full gap-3 overflow-x-auto whitespace-nowrap px-6 py-4 pb-2 hide-scrollbar bg-slate-100 dark:bg-zinc-900">
+                <div className="flex w-full gap-3 overflow-x-auto whitespace-nowrap px-4 sm:px-6 py-4 pb-2 hide-scrollbar bg-slate-100 dark:bg-zinc-900">
                     <button
                         onClick={() => setActiveCategory("all")}
                         className={`flex h-10 min-w-[80px] items-center justify-center rounded-lg px-4 text-sm font-bold shadow-sm transition-all ${activeCategory === "all"
@@ -220,7 +222,7 @@ export function PosTerminal({ categories, allProducts }: { categories: Category[
                 </div>
 
                 {/* Search Bar - Moved from Header to here for ease of access in this restricted layout scope */}
-                <div className="px-6 py-2">
+                <div className="px-4 sm:px-6 py-2">
                     <label className="relative flex h-10 w-full md:w-64 items-center">
                         <div className="absolute left-3 flex items-center justify-center text-[#4b5563] pointer-events-none">
                             <Search size={20} strokeWidth={2} />
@@ -236,8 +238,8 @@ export function PosTerminal({ categories, allProducts }: { categories: Category[
                 </div>
 
                 {/* Product Grid */}
-                <div className="flex-1 overflow-y-auto px-6 py-4">
-                    <div className="grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 pb-6">
+                <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-4 pb-24 lg:pb-6">
+                    <div className="grid grid-cols-2 gap-3 sm:gap-5 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 pb-6">
                         {displayedProducts.map((p, idx) => {
                             const hotkey = idx < 9 ? String(idx + 1) : idx === 9 ? "0" : null
                             return (
@@ -282,13 +284,107 @@ export function PosTerminal({ categories, allProducts }: { categories: Category[
                 </div>
             </section>
 
-            {/* Order Sidebar */}
-            <aside className="flex w-[400px] shrink-0 flex-col bg-white dark:bg-zinc-950 border-l border-slate-200 dark:border-zinc-800 shadow-[0_0_20px_rgba(0,0,0,0.03)] dark:shadow-none z-10">
+            {/* Mobile cart FAB - visible on small screens */}
+            <button
+                onClick={() => setCartOpen(true)}
+                className="lg:hidden fixed bottom-6 right-6 z-30 flex h-14 w-14 items-center justify-center rounded-full bg-[#059669] text-white shadow-lg shadow-[#059669]/40 hover:bg-[#047857] active:scale-95 transition-all"
+                aria-label="Open cart"
+            >
+                <ShoppingCart size={24} strokeWidth={2} />
+                {cart.length > 0 && (
+                    <span className="absolute -top-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-white text-[#059669] text-xs font-bold shadow">
+                        {cart.length}
+                    </span>
+                )}
+            </button>
+
+            {/* Mobile cart overlay */}
+            {cartOpen && (
+                <>
+                    <div
+                        className="lg:hidden fixed inset-0 bg-black/50 z-40"
+                        onClick={() => setCartOpen(false)}
+                        aria-hidden="true"
+                    />
+                    <aside className="lg:hidden fixed inset-x-0 bottom-0 top-1/4 z-50 flex flex-col bg-white dark:bg-zinc-950 border-t border-slate-200 dark:border-zinc-800 rounded-t-2xl shadow-2xl animate-slide-in-bottom overflow-hidden">
+                        <div className="flex items-center justify-between p-4 border-b border-slate-200 dark:border-zinc-800 shrink-0">
+                            <h2 className="text-lg font-bold text-[#1f2937] dark:text-zinc-100">Current Order ({cart.length})</h2>
+                            <button
+                                onClick={() => setCartOpen(false)}
+                                className="p-2 rounded-lg text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                                aria-label="Close cart"
+                            >
+                                <X size={24} strokeWidth={2} />
+                            </button>
+                        </div>
+                        <div className="flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-4">
+                            {/* Order Type + Server */}
+                            <div className="flex w-full rounded-lg bg-[#f3f4f6] dark:bg-zinc-800 p-1.5 border border-[#e5e7eb] dark:border-zinc-700">
+                                {(["Dine-in", "Takeout", "Delivery"] as const).map(type => (
+                                    <label key={type} className="flex flex-1 cursor-pointer items-center justify-center rounded-md py-2 text-sm font-bold transition-all has-[:checked]:bg-white dark:has-[:checked]:bg-zinc-700 has-[:checked]:text-[#059669] has-[:checked]:shadow-sm text-[#4b5563] dark:text-zinc-400">
+                                        <input type="radio" name="order_type_mobile" className="hidden" checked={orderType === type} onChange={() => setOrderType(type)} />
+                                        <span>{type}</span>
+                                    </label>
+                                ))}
+                            </div>
+                            {/* Cart items */}
+                            {cart.map(item => (
+                                <div key={item.id} className="flex gap-3 rounded-xl bg-white dark:bg-zinc-800 p-3 border border-[#e5e7eb] dark:border-zinc-700">
+                                    <div className="w-12 h-12 shrink-0 rounded-lg overflow-hidden bg-slate-100 dark:bg-zinc-700">
+                                        <img src={getProductImage(item)} alt={item.name} className="w-full h-full object-cover" />
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                        <div className="flex justify-between gap-2">
+                                            <span className="font-bold text-sm truncate">{item.name}</span>
+                                            <span className="font-bold text-sm shrink-0">{formatCurrency(item.price * item.quantity)}</span>
+                                        </div>
+                                        <div className="flex items-center justify-between mt-1">
+                                            <div className="flex items-center gap-2 rounded-md bg-gray-50 dark:bg-zinc-700 px-1.5 py-0.5">
+                                                <button onClick={() => updateQuantity(item.id, -1)} className="flex h-6 w-6 items-center justify-center rounded text-[#4b5563] hover:bg-white dark:hover:bg-zinc-600" type="button"><Minus size={14} /></button>
+                                                <span className="min-w-[16px] text-center text-sm font-bold">{item.quantity}</span>
+                                                <button onClick={() => updateQuantity(item.id, 1)} className="flex h-6 w-6 items-center justify-center rounded text-[#4b5563] hover:bg-white dark:hover:bg-zinc-600" type="button"><Plus size={14} /></button>
+                                            </div>
+                                            <button onClick={() => removeFromCart(item.id)} className="text-xs text-rose-600 hover:text-rose-700 flex items-center gap-1" type="button"><Trash2 size={14} /> Remove</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                            {cart.length === 0 && (
+                                <div className="flex flex-col items-center justify-center py-8 text-zinc-400">
+                                    <ShoppingCart size={40} className="opacity-40 mb-2" />
+                                    <p className="text-sm">No items. Add from menu.</p>
+                                </div>
+                            )}
+                            {/* Footer - only when cart has items */}
+                            {cart.length > 0 && (
+                                <div className="border-t border-[#e5e7eb] dark:border-zinc-700 pt-4 space-y-3">
+                                    <div className="flex justify-between text-sm"><span>Subtotal</span><span>{formatCurrency(totalAmount)}</span></div>
+                                    <div className="flex justify-between text-sm"><span>Tax (10%)</span><span>{formatCurrency(tax)}</span></div>
+                                    <div className="flex justify-between border-t border-dashed pt-3">
+                                        <span className="font-bold">Total</span><span className="text-xl font-extrabold text-[#059669]">{formatCurrency(finalTotal)}</span>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-2">
+                                        <button onClick={() => setCart([])} className="flex items-center justify-center gap-1 py-2.5 rounded-lg bg-red-50 dark:bg-red-900/20 text-red-600 text-sm font-bold" type="button"><Trash2 size={18} /> Clear</button>
+                                        <button onClick={handlePrintReceipt} className="flex items-center justify-center gap-1 py-2.5 rounded-lg bg-slate-100 dark:bg-zinc-700 text-slate-700 dark:text-zinc-300 text-sm font-bold" type="button"><Printer size={18} /> Print</button>
+                                    </div>
+                                    <button onClick={() => { handleCheckout(); setCartOpen(false); }} disabled={isProcessing} className="w-full flex items-center justify-between rounded-xl bg-[#059669] px-4 py-3.5 font-bold text-white disabled:opacity-50" type="button">
+                                        <span>{isProcessing ? "Processing..." : "Checkout"}</span>
+                                        <span className="text-lg">{formatCurrency(finalTotal)}</span>
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+                    </aside>
+                </>
+            )}
+
+            {/* Order Sidebar - desktop only */}
+            <aside className="hidden lg:flex w-[360px] xl:w-[400px] shrink-0 flex-col bg-white dark:bg-zinc-950 border-l border-slate-200 dark:border-zinc-800 shadow-[0_0_20px_rgba(0,0,0,0.03)] dark:shadow-none z-10">
 
                 {/* Order Header */}
-                <div className="flex flex-col border-b border-[#e5e7eb] p-5 pb-4 bg-white">
+                <div className="flex flex-col border-b border-[#e5e7eb] dark:border-zinc-800 p-5 pb-4 bg-white dark:bg-zinc-950">
                     <div className="flex items-center justify-between mb-4">
-                        <h2 className="text-xl font-bold text-[#1f2937]">Current Order</h2>
+                        <h2 className="text-xl font-bold text-[#1f2937] dark:text-zinc-100">Current Order</h2>
                         <span className="rounded-full bg-[#d1fae5] px-3 py-1 text-xs font-bold text-[#059669] uppercase tracking-wide">
                             {cart.length > 0 ? "Pending" : "Empty"}
                         </span>
