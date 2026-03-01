@@ -84,7 +84,9 @@ export default async function InventoryPage() {
                                         <thead className="sticky top-0 bg-slate-50 z-10 shadow-sm border-b border-slate-200">
                                             <tr>
                                                 <th className="py-3 px-6 text-xs font-bold uppercase tracking-wider text-slate-500 bg-slate-50">Ingredient</th>
-                                                <th className="py-3 px-4 text-xs font-bold uppercase tracking-wider text-slate-500 bg-slate-50 text-right w-32">Qty</th>
+                                                <th className="py-3 px-4 text-xs font-bold uppercase tracking-wider text-slate-500 bg-slate-50 text-right w-24">Qty</th>
+                                                <th className="py-3 px-4 text-xs font-bold uppercase tracking-wider text-slate-500 bg-slate-50">Batch #</th>
+                                                <th className="py-3 px-4 text-xs font-bold uppercase tracking-wider text-slate-500 bg-slate-50">Expires</th>
                                                 <th className="py-3 px-2 text-xs font-bold uppercase tracking-wider text-slate-500 bg-slate-50 text-center w-16">Unit</th>
                                                 <th className="py-3 px-4 text-xs font-bold uppercase tracking-wider text-slate-500 bg-slate-50 text-right w-24">Actions</th>
                                             </tr>
@@ -103,18 +105,32 @@ export default async function InventoryPage() {
                                                             </div>
                                                         </div>
                                                     </td>
-                                                    <td className="py-3 px-4 text-right">
-                                                        <form action={updateInventory} className="flex items-center justify-end">
+                                                    <td className="py-3 px-4" colSpan={3}>
+                                                        <form action={updateInventory} className="flex flex-wrap items-center gap-2">
                                                             <input type="hidden" name="ingredientId" value={ing.id} />
                                                             <input
                                                                 type="number"
                                                                 step="0.01"
                                                                 name="quantity"
-                                                                defaultValue={ing.inventory?.quantity || 0}
-                                                                className={`w-20 bg-white border ${(ing.inventory?.quantity || 0) <= 10 ? "border-orange-300 text-orange-600" : "border-slate-200 text-slate-800"
-                                                                    } rounded px-2 py-1.5 text-sm text-right font-bold shadow-sm focus:ring-2 focus:ring-[#13ec80]`}
+                                                                defaultValue={ing.inventory?.quantity ?? 0}
+                                                                min="0"
+                                                                className={`w-20 bg-white dark:bg-zinc-800 border rounded px-2 py-1.5 text-sm text-right font-bold ${(ing.inventory?.quantity ?? 0) <= 10 ? "border-orange-300 text-orange-600" : "border-slate-200 dark:border-zinc-600 text-slate-800 dark:text-zinc-100"} focus:ring-2 focus:ring-emerald-500`}
                                                             />
-                                                            <button type="submit" className="ml-1 text-slate-400 hover:text-[#0fb863] p-1.5 transition-colors rounded hover:bg-emerald-50">
+                                                            <input
+                                                                type="text"
+                                                                name="batchNumber"
+                                                                placeholder="Batch #"
+                                                                defaultValue={ing.inventory?.batchNumber ?? ""}
+                                                                maxLength={100}
+                                                                className="w-28 bg-white dark:bg-zinc-800 border border-slate-200 dark:border-zinc-600 rounded px-2 py-1.5 text-sm placeholder-slate-400 focus:ring-2 focus:ring-emerald-500"
+                                                            />
+                                                            <input
+                                                                type="date"
+                                                                name="expiresAt"
+                                                                defaultValue={ing.inventory?.expiresAt ? new Date(ing.inventory.expiresAt).toISOString().slice(0, 10) : ""}
+                                                                className="w-36 bg-white dark:bg-zinc-800 border border-slate-200 dark:border-zinc-600 rounded px-2 py-1.5 text-sm focus:ring-2 focus:ring-emerald-500"
+                                                            />
+                                                            <button type="submit" className="text-slate-400 hover:text-emerald-600 p-1.5 rounded hover:bg-emerald-50" title="Save">
                                                                 <Save size={16} />
                                                             </button>
                                                         </form>
@@ -133,7 +149,7 @@ export default async function InventoryPage() {
                                             ))}
                                             {ingredients.length === 0 && (
                                                 <tr>
-                                                    <td colSpan={4} className="py-8 text-center text-slate-500 text-sm">No ingredients found. Add one above.</td>
+                                                    <td colSpan={6} className="py-8 text-center text-slate-500 text-sm">No ingredients found. Add one above.</td>
                                                 </tr>
                                             )}
                                         </tbody>

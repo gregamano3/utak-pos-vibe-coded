@@ -4,10 +4,9 @@ import fs from "fs"
 import sharp from "sharp"
 import { getCurrentUser } from "@/app/lib/auth"
 import { ensureUploadDir, getUploadDir } from "@/app/lib/upload"
+import { imageUploadSchema } from "@/app/lib/validations"
 
 const ALLOWED_ROLES = ["ADMIN", "MANAGER"]
-const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"]
-const MAX_SIZE = 10 * 1024 * 1024 // 10MB
 const MAX_WIDTH = 1200
 const MAX_HEIGHT = 1200
 const WEBP_QUALITY = 85
@@ -24,12 +23,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "No file provided" }, { status: 400 })
   }
 
-  if (!ALLOWED_TYPES.includes(file.type)) {
-    return NextResponse.json({ error: "Invalid file type. Use JPEG, PNG, WebP, or GIF." }, { status: 400 })
-  }
-
-  if (file.size > MAX_SIZE) {
-    return NextResponse.json({ error: "File too large. Max 10MB." }, { status: 400 })
+  const validated = imageUploadSchema.safeParse({ file })
+  if (!validated.success) {
+    const msg = validated.error.issues[0]?.message ?? "Invalid file"
+    return NextResponse.json({ error: msg }, { status: 400 })
   }
 
   const filename = `${crypto.randomUUID()}.webp`

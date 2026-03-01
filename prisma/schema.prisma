@@ -73,12 +73,14 @@ model ProductIngredient {
 }
 
 model Inventory {
-  id           String     @id @default(uuid())
-  ingredientId String     @unique
-  quantity     Float      // Current stock
+  id           String    @id @default(uuid())
+  ingredientId String    @unique
+  quantity     Float     // Current stock
+  batchNumber  String?   // Batch/lot number for traceability
+  expiresAt    DateTime? // When this batch expires
   ingredient   Ingredient @relation(fields: [ingredientId], references: [id], onDelete: Cascade)
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
 }
 
 model Order {

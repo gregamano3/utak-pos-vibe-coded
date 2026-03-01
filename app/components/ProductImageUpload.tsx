@@ -15,11 +15,30 @@ export function ProductImageUpload({ name = "imageUrl", defaultValue, className 
   const [error, setError] = useState<string | null>(null)
   const inputRef = useRef<HTMLInputElement>(null)
 
+  const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"]
+  const MAX_SIZE = 10 * 1024 * 1024 // 10MB
+
   async function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
     if (!file) return
 
     setError(null)
+    if (!ALLOWED_TYPES.includes(file.type)) {
+      setError("Invalid file type. Use JPEG, PNG, WebP, or GIF.")
+      e.target.value = ""
+      return
+    }
+    if (file.size > MAX_SIZE) {
+      setError("File too large. Max 10MB.")
+      e.target.value = ""
+      return
+    }
+    if (file.size < 100) {
+      setError("File appears empty or corrupt.")
+      e.target.value = ""
+      return
+    }
+
     setUploading(true)
     try {
       const fd = new FormData()

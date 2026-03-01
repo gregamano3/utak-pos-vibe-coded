@@ -12,9 +12,10 @@ A Point-of-Sale (POS) and inventory management system for restaurants. Built wit
 - **Product Catalog** — Manage categories and products with names, prices, and images
 - **Recipe & Inventory** — Map products to ingredients (recipes), track stock, and auto-deduct on sale
 - **Menu & Recipe Costing** — View product costs based on ingredient usage
-- **Sales Reports** — Filter by date range, view totals, order history, and export to PDF/Excel
+- **Sales Reports** — Filter by date range, view totals, order history, void transactions, and export to PDF/Excel
 - **Kitchen Display** — View today's orders for preparation
 - **Staff & Shifts** — User management, roles, and shift tracking (Admin only)
+- **Audit Trail** — Log of orders, user changes, and voided transactions (Admin only)
 - **User Settings** — Create/edit users and roles (Admin only)
 
 ---
@@ -25,19 +26,25 @@ A Point-of-Sale (POS) and inventory management system for restaurants. Built wit
 |--------|-------------|
 | **Authentication** | Login with bcrypt-hashed passwords, session via cookie |
 | **Role-Based Access (RBAC)** | 5 roles: Admin, Manager, Cashier, Kitchen, Staff — each with route-level permissions |
-| **POS Terminal** | Category filters, search, cart with qty adjustment, order types (Dine-in/Takeout/Delivery) |
+| **POS Terminal** | Category filters, search, cart with product images, qty adjustment, dedicated Remove button, order types (Dine-in/Takeout/Delivery), hotkeys 1–9/0 |
 | **Products** | Create, edit, delete products; categories; optional image upload |
 | **Inventory** | Add ingredients, track quantity, update stock; recipe mapping per product |
 | **Order Checkout** | Records order, deducts ingredients per recipe, links to user |
+| **Void Transactions** | Void completed orders (Admin/Manager/Cashier) with password confirmation; restores inventory |
+| **Official Receipt** | Generate and view PDF receipt from POS Print button |
+| **POS Hotkeys** | Press 1–9 or 0 to add first 10 displayed products to cart |
 | **Dashboard** | Today's sales, net profit, order count, low stock, top-selling products |
-| **Reports** | Date filter, total sales/orders, best seller, order history |
-| **Report Export** | Download PDF or Excel with summary, orders, and top products |
+| **Reports** | Date filter, total sales/orders, best seller, order history, void button per order |
+| **Report Export** | Download PDF or Excel with summary, orders, and top products (excludes voided) |
+| **Audit Trail** | View action log (orders, user CRUD, voids) with filters |
 | **Kitchen** | Today's orders grouped by order ID |
 | **Menu/Recipe Costing** | Product cost breakdown based on ingredient usage |
 | **Staff Management** | User list, create/edit users, assign roles |
+| **Inventory (Cashier)** | Cashiers can view and manage inventory |
 | **Theme Toggle** | Light/dark mode via `next-themes` |
 | **Currency** | Philippine Peso (₱) formatting |
-| **Image Upload** | Product images (JPEG, PNG, WebP, GIF, max 5MB) |
+| **Image Upload** | Product images (JPEG, PNG, WebP, GIF) — auto resize, convert to WebP, max 10MB |
+| **Toasts & Modals** | Sonner toasts instead of browser alerts; custom confirm/void dialogs |
 
 ---
 
@@ -50,7 +57,14 @@ A Point-of-Sale (POS) and inventory management system for restaurants. Built wit
 - **Auth:** Cookie-based session, bcrypt
 - **Icons:** Lucide React
 - **Reports:** jsPDF, jspdf-autotable, write-excel-file
+- **Toasts:** Sonner
+- **Image Processing:** Sharp (resize, WebP conversion)
 - **Deployment:** Docker (standalone output)
+
+### Development Tools
+
+- **Planning:** Gemini 3.1
+- **Coding:** Cursor (Auto mode — no particular LLM)
 
 ---
 
@@ -72,7 +86,7 @@ A Point-of-Sale (POS) and inventory management system for restaurants. Built wit
 
 ### Database
 
-- 9 tables (within scope): User, Category, Product, Ingredient, ProductIngredient, Inventory, Order, OrderItem, Shift
+- 10 tables: User, Category, Product, Ingredient, ProductIngredient, Inventory, Order, OrderItem, Shift, AuditLog
 - UUIDs for primary keys
 - Cascade deletes where appropriate (e.g. ProductIngredient on product delete)
 
@@ -99,8 +113,8 @@ A Point-of-Sale (POS) and inventory management system for restaurants. Built wit
 - **RBAC:** `requireRole()` on pages; API routes validate role before actions
 - **Route matrix:**
   - Dashboard, POS: Admin, Manager, Staff, Cashier
-  - Products, Menu, Inventory, Reports: role-specific
-  - Staff, Settings: Admin only
+  - Products, Menu, Inventory, Reports: role-specific (Cashier can access Inventory)
+  - Staff, Settings, Audit Trail: Admin only
 
 ### HTTP Headers
 
@@ -112,7 +126,7 @@ A Point-of-Sale (POS) and inventory management system for restaurants. Built wit
 
 ### API Security
 
-- **Upload API:** Role check (Admin/Manager), file type whitelist, 5MB limit
+- **Upload API:** Role check (Admin/Manager), file type whitelist, 10MB limit, server-side resize & WebP conversion
 - **Report Export:** Role check (Admin, Manager, Cashier)
 - **Auth Clear:** No auth needed (logout helper)
 
@@ -182,21 +196,38 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ### Build & Run
 
+Set `DATABASE_URL` in `.env` (or your environment), then:
+
 ```bash
 docker-compose up -d
 ```
 
-- **App:** http://localhost:3000  
-- **PostgreSQL:** localhost:5432 (user: root, db: utak_pos)
+- **App:** http://localhost:3000
+
+### No Dedicated PostgreSQL?
+
+If you don't have a PostgreSQL server, uncomment the `db` service and `db_data` volume in `docker-compose.yml`, add `depends_on: db` to the app service, and set `DATABASE_URL=postgresql://root:secret@db:5432/utak_pos?schema=public` (or rely on the commented default).
 
 ### Volumes
 
-- `db_data` — PostgreSQL data
 - `uploads_data` — Product images (mounted at `/app/public/uploads`)
+- `db_data` — Only if you uncomment the bundled PostgreSQL service
 
-### Environment
+---
 
-Override `DATABASE_URL` in `docker-compose.yml` for production.
+## Hosting (Production)
+
+Production hosting uses:
+
+- **Docker / Portainer** — App runs as a container; PostgreSQL can be external or run in Docker (see Docker section).
+- **Nginx Proxy Manager** — Reverse proxy in front of the app; handles SSL/TLS, domains, and routing.
+- **Cloudflare Tunnel** — Exposes the app securely without opening ports; connects to Cloudflare’s edge for HTTPS and DDoS protection.
+
+### Typical Flow
+
+1. **Portainer** runs the app container (and optionally the database if using the bundled PostgreSQL).
+2. **Nginx Proxy Manager** proxies requests to the app container (e.g. `http://app:3000`).
+3. **Cloudflare Tunnel** (cloudflared) connects your server to Cloudflare and routes traffic to Nginx or directly to the app.
 
 ---
 
@@ -224,6 +255,7 @@ app/
 │   ├── inventory/
 │   ├── menu/
 │   ├── reports/
+│   ├── audit/
 │   ├── kitchen/
 │   ├── staff/
 │   └── settings/

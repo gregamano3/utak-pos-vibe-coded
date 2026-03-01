@@ -8,30 +8,28 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - DATABASE_URL=postgresql://root:secret@db:5432/utak_pos?schema=public
+      - DATABASE_URL=${DATABASE_URL}
     volumes:
       - uploads_data:/app/public/uploads
-    depends_on:
-      db:
-        condition: service_healthy
 
-  db:
-    image: postgres:15-alpine
-    restart: always
-    environment:
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: secret
-      POSTGRES_DB: utak_pos
-    ports:
-      - "5432:5432"
-    volumes:
-      - db_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U root -d utak_pos"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+  # Uncomment below if you don't have a dedicated PostgreSQL server
+  # db:
+  #   image: postgres:15-alpine
+  #   restart: always
+  #   environment:
+  #     POSTGRES_USER: root
+  #     POSTGRES_PASSWORD: secret
+  #     POSTGRES_DB: utak_pos
+  #   ports:
+  #     - "5432:5432"
+  #   volumes:
+  #     - db_data:/var/lib/postgresql/data
+  #   healthcheck:
+  #     test: ["CMD-SHELL", "pg_isready -U root -d utak_pos"]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 5
 
 volumes:
-  db_data:
+  # db_data:
   uploads_data:

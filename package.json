@@ -22,7 +22,8 @@
     "react-dom": "19.2.3",
     "sharp": "^0.34.5",
     "sonner": "^2.0.7",
-    "write-excel-file": "^3.0.5"
+    "write-excel-file": "^3.0.5",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

@@ -3,6 +3,7 @@ import { jsPDF } from "jspdf"
 import autoTable from "jspdf-autotable"
 import { getCurrentUser } from "@/app/lib/auth"
 import { getSalesReportData } from "@/app/lib/reports"
+import { reportQuerySchema } from "@/app/lib/validations"
 import { formatCurrency } from "@/app/lib/currency"
 
 const ALLOWED_ROLES = ["ADMIN", "MANAGER", "CASHIER"]
@@ -14,9 +15,12 @@ export async function GET(request: NextRequest) {
   }
 
   const { searchParams } = new URL(request.url)
-  const fromParam = searchParams.get("from")
-  const toParam = searchParams.get("to")
-
+  const query = reportQuerySchema.safeParse({
+    from: searchParams.get("from") ?? undefined,
+    to: searchParams.get("to") ?? undefined,
+  })
+  const fromParam = query.success ? query.data.from : null
+  const toParam = query.success ? query.data.to : null
   const from = fromParam ? new Date(fromParam) : new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
   const to = toParam ? new Date(toParam) : new Date()
 

@@ -3,40 +3,40 @@
 import { prisma } from "../prisma";
 import { requireRole } from "../auth";
 import { createAuditLog } from "../audit";
+import { userCreateSchema, userUpdateSchema } from "../validations";
 import bcrypt from "bcryptjs";
-import type { Role } from "@prisma/client";
 
 export async function createUser(formData: FormData) {
   const current = await requireRole(["ADMIN"]);
-  const username = formData.get("username") as string;
-  const password = formData.get("password") as string;
-  const role = formData.get("role") as Role;
-  const pin = (formData.get("pin") as string) || null;
-
-  if (!username?.trim() || !password) {
-    return { error: "Username and password required" };
+  const raw = {
+    username: formData.get("username"),
+    password: formData.get("password"),
+    role: formData.get("role"),
+    pin: formData.get("pin") || null,
+  };
+  const parsed = userCreateSchema.safeParse(raw);
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0]?.message ?? "Invalid input" };
   }
-  if (password.length < 6) {
-    return { error: "Password must be at least 6 characters" };
-  }
+  const { username, password, role, pin } = parsed.data;
 
-  const existing = await prisma.user.findUnique({ where: { username: username.trim() } });
+  const existing = await prisma.user.findUnique({ where: { username } });
   if (existing) return { error: "Username already exists" };
 
   const hashed = await bcrypt.hash(password, 10);
   const newUser = await prisma.user.create({
     data: {
-      username: username.trim(),
+      username,
       password: hashed,
       role: role || "CASHIER",
-      pin: pin?.trim() || null,
+      pin,
     },
   });
   await createAuditLog({
     action: "USER_CREATED",
     entity: "user",
     entityId: newUser.id,
-    details: `Created user "${username.trim()}" with role ${role}`,
+    details: `Created user "${username}" with role ${role}`,
     userId: current.id,
   });
   return { success: true };
@@ -44,22 +44,26 @@ export async function createUser(formData: FormData) {
 
 export async function updateUser(userId: string, formData: FormData) {
   const current = await requireRole(["ADMIN"]);
-  const username = formData.get("username") as string;
-  const role = formData.get("role") as Role;
-  const pin = (formData.get("pin") as string) || null;
-  const newPassword = formData.get("newPassword") as string | null;
+  if (!userId || typeof userId !== "string") return { error: "Invalid user" };
+  const raw = {
+    username: formData.get("username"),
+    role: formData.get("role"),
+    pin: formData.get("pin") || null,
+    newPassword: formData.get("newPassword") || "",
+  };
+  const parsed = userUpdateSchema.safeParse(raw);
+  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Invalid input" };
 
-  if (!username?.trim()) return { error: "Username required" };
-
+  const { username, role, pin, newPassword } = parsed.data;
   const existing = await prisma.user.findFirst({
-    where: { username: username.trim(), NOT: { id: userId } },
+    where: { username, NOT: { id: userId } },
   });
   if (existing) return { error: "Username already taken" };
 
-  const data: { username: string; role: Role; pin: string | null; password?: string } = {
-    username: username.trim(),
-    role: role || "CASHIER",
-    pin: pin?.trim() || null,
+  const data: Parameters<typeof prisma.user.update>[0]["data"] = {
+    username,
+    role: (role || "CASHIER") as "ADMIN" | "MANAGER" | "CASHIER",
+    pin,
   };
   if (newPassword?.length && newPassword.length >= 6) {
     data.password = await bcrypt.hash(newPassword, 10);

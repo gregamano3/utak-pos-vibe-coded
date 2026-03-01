@@ -2,6 +2,7 @@
 
 import bcrypt from "bcryptjs"
 import { prisma } from "../prisma"
+import { checkoutItemsSchema, voidOrderSchema } from "../validations"
 import { revalidatePath } from "next/cache"
 import { getCurrentUser } from "../auth"
 import { createAuditLog } from "../audit"
@@ -11,11 +12,15 @@ export async function checkoutOrder(
     totalAmount: number,
     paymentMethod: string = "CASH"
 ) {
-    if (!items.length) return { success: false, error: "Cart is empty" }
+    const parsed = checkoutItemsSchema.safeParse(items)
+    if (!parsed.success) {
+        return { success: false, error: parsed.error.issues[0]?.message ?? "Invalid cart" }
+    }
 
     try {
         const user = await getCurrentUser()
         let orderId: string | undefined
+        const validItems = parsed.data
 
         await prisma.$transaction(async (tx) => {
             // 1. Create order
@@ -25,7 +30,7 @@ export async function checkoutOrder(
                     paymentMethod,
                     userId: user?.id,
                     items: {
-                        create: items.map(item => ({
+                        create: validItems.map(item => ({
                             productId: item.productId,
                             quantity: item.quantity,
                             price: item.price
@@ -36,7 +41,7 @@ export async function checkoutOrder(
             orderId = order.id
 
             // 2. Deduct inventory
-            for (const item of items) {
+            for (const item of validItems) {
                 const productIngredients = await tx.productIngredient.findMany({
                     where: { productId: item.productId }
                 })
@@ -60,7 +65,7 @@ export async function checkoutOrder(
             action: "ORDER_CREATED",
             entity: "order",
             entityId: orderId,
-            details: JSON.stringify({ totalAmount, paymentMethod, itemCount: items.length }),
+            details: JSON.stringify({ totalAmount, paymentMethod, itemCount: validItems.length }),
             userId: user?.id,
         })
 
@@ -82,9 +87,9 @@ export async function voidOrder(orderId: string, password: string) {
     if (!user || !allowed.includes(user.role)) {
         return { success: false, error: "Unauthorized" }
     }
-
-    if (!password?.trim()) {
-        return { success: false, error: "Password required" }
+    const parsed = voidOrderSchema.safeParse({ orderId, password })
+    if (!parsed.success) {
+        return { success: false, error: parsed.error.issues[0]?.message ?? "Invalid input" }
     }
 
     const fullUser = await prisma.user.findUnique({
