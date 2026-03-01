@@ -88,6 +88,7 @@ model Order {
   totalAmount   Float
   paymentMethod String      @default("CASH")
   status        String      @default("COMPLETED")
+  preparedAt    DateTime?   // When kitchen marked order as prepared
   userId        String?
   user          User?       @relation(fields: [userId], references: [id])
   items         OrderItem[]

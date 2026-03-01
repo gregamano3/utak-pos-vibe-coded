@@ -149,3 +149,24 @@ export async function voidOrder(orderId: string, password: string) {
         return { success: false, error: "Failed to void order" }
     }
 }
+
+export async function markOrderPrepared(orderId: string) {
+    const user = await getCurrentUser()
+    const allowed = ["ADMIN", "MANAGER", "KITCHEN"]
+    if (!user || !allowed.includes(user.role)) {
+        return { success: false, error: "Unauthorized" }
+    }
+
+    const order = await prisma.order.findUnique({ where: { id: orderId } })
+    if (!order) return { success: false, error: "Order not found" }
+    if (order.status === "VOIDED") return { success: false, error: "Order is voided" }
+    if (order.preparedAt) return { success: true } // Already marked
+
+    await prisma.order.update({
+        where: { id: orderId },
+        data: { preparedAt: new Date() },
+    })
+
+    revalidatePath("/kitchen")
+    return { success: true }
+}
